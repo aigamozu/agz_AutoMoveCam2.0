@@ -38,6 +38,8 @@ public:
 	*/
 	void Init(cv::Mat &src);
 
+
+	void Init2(cv::Mat &src);
 	/**
 	* @fn
 	* ‰æ‘œ‚Ì‰Šú‰»‚ğs‚¤ŠÖ”
@@ -74,7 +76,7 @@ public:
 	*/
 	void calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat &origin);
 
-
+	void calcsom2(int w,int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat &origin); 
 
 	/**
 	* @fn
@@ -96,7 +98,7 @@ public:
 
 	std::string setImageName(std::string str, int time);
 
-	cv::Point2f calc_centerPoint(int id);
+	cv::Point2f calc_centerPoint(int n, std::vector<int> &neighbor);
 
 	void set_size(int width, int height);
 
@@ -104,9 +106,15 @@ public:
 
 	void set_img(cv::UMat &src);
 
-	void showSOM2(cv::UMat &src);
+	void showSOM2(cv::UMat &src, cv::Mat &H, std::vector<int> &v);
 
 	cv::Point2f calc_weight(cv::Point2f a, cv::Point2f b, cv::Point2f c, cv::Point2f d);
+
+	std::vector<Neuron> get_SOM();
+
+	void showSOM3(cv::UMat &src, std::vector<int> &v);
+
+	void plotNowTargetArea(cv::UMat src, std::vector<int> &v);
 };
 
 

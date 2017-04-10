@@ -189,27 +189,84 @@ void Control::is_out(void){
 //	
 //	ターゲットとロボットの状態をプロットする.
 ////////////////////////////////////////////////////////////////////////////////
-void Control::plot_target(cv::UMat &img, cv::Point2i Previous){
+void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
 
 	// すべてのターゲットのプロット（水色）
 	for (std::vector<target>::iterator itr = allTarget.begin(); itr != allTarget.end(); itr++) {
 
-		cv::circle(img, cv::Point(itr->point), 20, cv::Scalar(255, 255, 0), 3, 4);
+		//cv::circle(img, cv::Point(itr->point), 20, cv::Scalar(255, 255, 0), 3, 4);
 		cv::putText(img, std::to_string(itr->n), cv::Point(itr->point), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 0), 0.5, CV_AA);
 	}
-
+	
 	// 現在向かうべきターゲットのプロット（黒）
-	cv::circle(img, cv::Point(nowTarget_itr->point), 20, cv::Scalar(0, 0, 0), 3, 4);
+	//cv::circle(img, cv::Point(nowTarget_itr->point), 20, cv::Scalar(0, 0, 0), 3, 4);
 
 	line(img, nowPoint, Previous, cv::Scalar(255, 0, 0), 2, CV_AA);
 
 	// 内外判定結果の表示
+
 	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 	// ロボットの動作の表示
 	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+//
+//	plot_trans_target
+//	
+//	ターゲットとロボットの状態をプロットする.
+////////////////////////////////////////////////////////////////////////////////
+
+void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat H){
+	std::vector<target> t = allTarget;
+	double a = H.at<double>(0, 0);
+	double b = H.at<double>(0, 1);
+	double c = H.at<double>(0, 2);
+	double d = H.at<double>(1, 0);
+	double e = H.at<double>(1, 1);
+	double f = H.at<double>(1, 2);
+	double g = H.at<double>(2, 0);
+	double h = H.at<double>(2, 1);
+	double i = H.at<double>(2, 2);
+
+
+	for (int j = 0; j < t.size(); j++){
+		cv::Point2f temp = t[j].point;
+		t[j].point.x = (temp.x * a + temp.y * b + c) / float(temp.x * g + temp.y * h + i);
+		t[j].point.y = (temp.x * d + temp.y * e + f) / float(temp.x * g + temp.y * h + i);
+		if (nowTarget_itr->n != t[j].n){
+			//cv::circle(img, t[j].point, 20, cv::Scalar(255, 255, 0), 3, 4);
+		}
+		cv::putText(img, std::to_string(t[j].n), cv::Point(t[j].point), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 0), 0.5, CV_AA);
+	}
+
+
+	// 現在向かうべきターゲットのプロット（黒）
+	cv::Point2f temp = nowTarget_itr->point;
+	cv::Point2f target, pre, now;
+	target.x = (temp.x * a + temp.y * b + c) / float(temp.x * g + temp.y * h + i);
+	target.y = (temp.x * d + temp.y * e + f) / float(temp.x * g + temp.y * h + i);
+	//cv::circle(img, target, 20, cv::Scalar(0, 0, 0), 3, 4);
+
+	temp = Previous;
+	pre.x = (temp.x * a + temp.y * b + c) / float(temp.x * g + temp.y * h + i);
+	pre.y = (temp.x * d + temp.y * e + f) / float(temp.x * g + temp.y * h + i);
+
+	temp = nowPoint;
+	now.x = (temp.x * a + temp.y * b + c) / float(temp.x * g + temp.y * h + i);
+	now.y = (temp.x * d + temp.y * e + f) / float(temp.x * g + temp.y * h + i);
+	line(img, now, pre, cv::Scalar(255, 0, 0), 2, CV_AA);
+
+	// 内外判定結果の表示
+
+	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
+
+	// ロボットの動作の表示
+	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 }
 
@@ -296,7 +353,7 @@ void Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 	}
 
 	vconcat(*bar, *img, concat_img);
-	
+
 	int value = max_count / 5;
 	for (int i = 0; i < 5; i++){
 		cv::putText(concat_img, std::to_string(i*value), cv::Point(0 + 100 * i, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1.0, CV_AA);
@@ -361,26 +418,28 @@ void Control::set_target(SOM som) {
 			// 左から右へターゲットを設定する
 			if (i % 2 == 0){
 				for (int j = 0; j < (width / 100); j++) {
-					std::cout << (width/100)*i+j << std::endl;
-					t.point = som.calc_centerPoint((width/100+1)*i+j);
+
+					t.point = som.calc_centerPoint((width / 100 + 1)*i + j,t.neighbor);
 					t.n = num;
 					allTarget.push_back(t);
+					t.neighbor.clear();
 					num++;
-					std::cout << t.point << " " << t.n << std::endl;
+
 				}
 			}
 			// 右から左へターゲットを設定する
 			else {
-				for (int j = (width / 100)-1; j >= 0; j--) {
-					t.point = som.calc_centerPoint((width/100+1)*i+j);
+				for (int j = (width / 100) - 1; j >= 0; j--) {
+					t.point = som.calc_centerPoint((width / 100 + 1)*i + j,t.neighbor);
 					t.n = num;
 					allTarget.push_back(t);
+					t.neighbor.clear();
 					num++;
-					std::cout << t.point << " " << t.n << std::endl;
+
 				}
 			}
 
-			std::cout << t.point << " " << t.n << std::endl;
+			t.neighbor.clear();
 		}
 	}
 
@@ -398,4 +457,8 @@ void Control::set_point(cv::Point2i p){
 ////////////////////////////////////////////////
 int Control::get_target(void){
 	return nowTarget_itr->n;
+}
+
+std::vector<int> Control::get_nowTargetArea(void){
+	return nowTarget_itr->neighbor;
 }

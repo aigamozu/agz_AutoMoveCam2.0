@@ -22,10 +22,14 @@ private:
 		cv::Point2i point;
 		// ターゲット番号
 		int n;
+		std::vector<int> neighbor;
 	};
 
 	// すべてのターゲット
 	std::vector<target> allTarget;
+
+	//変換されたすべてのターゲット
+	std::vector<target> allTransformedTraget;
 
 	// 次に向かうターゲット
 	std::vector<target>::iterator nowTarget_itr;
@@ -59,6 +63,8 @@ public:
 	// プロット
 	void plot_target(cv::UMat &img, cv::Point2i Previous);
 
+	void plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat H);
+
 	//@comment ヒートマップ作成
 	void heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar);
 
@@ -69,4 +75,6 @@ public:
 
 	// get function
 	int get_target(void);
+
+	std::vector<int> get_nowTargetArea(void);
 };
