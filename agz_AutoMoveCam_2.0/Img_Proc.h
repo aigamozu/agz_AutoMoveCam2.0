@@ -21,6 +21,7 @@ private:
 	//取得画像
 	cv::UMat capImg;
 
+	//ホモグラフィー行列
 	cv::Mat InvPerse_matrix;
 
 	cv::Mat Homo;

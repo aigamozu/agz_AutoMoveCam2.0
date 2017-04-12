@@ -63,9 +63,10 @@ public:
 	// プロット
 	void plot_target(cv::UMat &img, cv::Point2i Previous);
 
+	// 逆射影変換したSOMの描画
 	void plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat H);
 
-	//@comment ヒートマップ作成
+	// ヒートマップ作成
 	void heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar);
 
 	//	set function
@@ -76,5 +77,6 @@ public:
 	// get function
 	int get_target(void);
 
+	//現在のターゲットの近傍情報取得
 	std::vector<int> get_nowTargetArea(void);
 };

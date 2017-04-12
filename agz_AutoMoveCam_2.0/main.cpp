@@ -7,7 +7,7 @@
 
 #define GRAVITY 1      //画像中の領域 : 0  注目領域 : 1
 #define CAM_ID 1	   //カメラID
-const LPCSTR com = "COM5";		//COMポート名
+const LPCSTR com = "COM3";		//COMポート名
 std::vector<cv::Point2f> Pos;	//水田の四隅の点
 std::vector<cv::Point2f> Pos2;
 
@@ -18,13 +18,8 @@ int action;			   //ロボットの動作変数 1:前進 2:右旋回 4:左
 SOM s = SOM();
 SOM s2 = SOM();
 
-//cv::Mat sample_img = cv::imread("test2.JPG", 1);            //テスト画像用（SOM）
-//cv::Mat sample_img = cv::imread("rice.jpg", 1);            //テスト画像用（SOM）
-//if (!sample_img.data)exit(0);								//テスト画像用（SOM）
-//cv::resize(sample_img, sample_img, cv::Size(), 0.15, 0.15); //テスト画像用（SOM）
 
-
-//データ出力用csvファイル名作成関数　
+// データ出力用csvファイル名作成関数　
 std::string setFilename(std::string str){
 	time_t now = time(NULL);
 	struct tm * pnow = localtime(&now);
@@ -36,22 +31,28 @@ std::string setFilename(std::string str){
 	sprintf(time, "%d_%d_%d_%d_%d", pnow->tm_year + 1900, pnow->tm_mon + 1,
 		pnow->tm_mday, pnow->tm_hour, pnow->tm_min);
 
-	return data + str + time + c; //@comment ファイル名
+	return data + str + time + c; //@comment 生成されたファイル名
 }
 
-//マウスクリック取得座標位置に円をプロット
+// マウスクリック取得座標位置に円をプロット
 void drawPoint(cv::Mat* img, cv::Point2i point){
 	cv::circle(*img, point, 8, cv::Scalar(0, 255, 0), -1, CV_AA);
 	cv::imshow("getCoordinates", *img);
 }
 
-//水田領域の座標取得用関数
+// 水田領域の座標取得用関数
 void getCoordinates(int event, int x, int y, int flags, void* param)
 {
-	cv::Mat* image = static_cast<cv::Mat*>(param);
+	//クリック点描画のための画像生成
+	cv::Mat* image = static_cast<cv::Mat*>(param); 
 	static int count = 0;
+	
+	// 4点クリックされた場合は通常処理を行う
+	// クリックされない場合はエラー処理を行う
+
 	switch (event) {
-	case CV_EVENT_LBUTTONDOWN://@comment 左クリックが押された時
+	// 左クリックが押された時
+	case CV_EVENT_LBUTTONDOWN:
 		Pos.push_back(cv::Point2f(x, y));
 		drawPoint(image, cv::Point2i(x, y));
 		std::cout << ++count << " : " << "x : " << x << ", y : " << y << std::endl;
@@ -62,14 +63,17 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 			break;
 		}
 		break;
+
+	// 右クリックされたとき
 	case CV_EVENT_RBUTTONDOWN:
-		//4点以上クリックされない場合画像の内側の4点を指定
 		if (count < 4){
 
 			std::cout << std::endl;
 			std::cout << "4点以上指定してください" << std::endl<<std::endl;
-			system("pause");
-			exit(0);
+			std::cout << "何かキーを押してください"<< std::endl;
+			
+			exit(1);
+
 		}
 		cv::destroyAllWindows();
 		break;
@@ -79,26 +83,14 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 
 //画像を取得し,水田領域を設定
 void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
-	int width=10, height=10;
+	int width=9, height=9;
 	cv::Mat field;
 	cv::UMat src_frame, dst_img;
 
 
-	//std::cout << "水田の大きさを入力してください(m)単位" << std::endl;
-	//std::cout << "横 : ";    std::cin >> width;
-	//std::cout << "縦 : ";    std::cin >> height;
-	//std::cout << std::endl;
-
 	width *= 100;
 	height *= 100;
 
-	//if (width < 300 || height < 300) //@comment 3x3(m)以上の領域を指定
-	//{
-	//	std::cout << "※ 縦、横それぞれ３ｍ以上を指定してください" << std::endl;
-	//	std::cout << std::endl;
-	//	system("PAUSE");
-	//	exit(0);
-	//}
 
 	imp.setField(width, height);
 	nm30_init();
@@ -108,9 +100,7 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 	for (int i = 0; i < 10; i++) {
 		imp.getFrame().copyTo(src_frame);//@comment 1フレーム取得
 	}
-	//if (!sample_img.data)exit(0);								//テスト画像用（SOM）
-	//cv::resize(sample_img, sample_img, cv::Size(), 0.15, 0.15); //テスト画像用（SOM）
-	//sample_img.copyTo(src_frame); //テスト画像用（SOM）
+
 	std::cout << "水田の領域を左下から時計回りになるように４点クリックしてください" << std::endl;
 
 	//------------------座標取得-----------------------------------------------
@@ -127,12 +117,17 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 
 	imp.Perspective(src_frame, dst_img, Pos);
 
-	Pos2.push_back(cv::Point(30, dst_img.rows - 30));
-	Pos2.push_back(cv::Point(30, 30));
-	Pos2.push_back(cv::Point(dst_img.cols - 30, 30));
-	Pos2.push_back(cv::Point(dst_img.cols - 30, dst_img.rows - 30));
+	//Pos2.push_back(cv::Point(30, dst_img.rows - 30));
+	//Pos2.push_back(cv::Point(30, 30));
+	//Pos2.push_back(cv::Point(dst_img.cols - 30, 30));
+	//Pos2.push_back(cv::Point(dst_img.cols - 30, dst_img.rows - 30));
 
-	cv::Point pt2[10]; //任意の4点を配列に入れる
+	Pos2.push_back(cv::Point(5, dst_img.rows - 5));
+	Pos2.push_back(cv::Point(5, 5));
+	Pos2.push_back(cv::Point(dst_img.cols - 5, 5));
+	Pos2.push_back(cv::Point(dst_img.cols - 5 , dst_img.rows - 5));
+
+	cv::Point pt2[10]; //任意の4点を配列に格納
 	for (int i = 0; i < Pos2.size(); i++){
 		pt2[i] = Pos2[i];
 	}
@@ -170,15 +165,7 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 	ofs << imp.getField().x << ", " << imp.getField().y << std::endl;
 	ofs << "x軸, y軸（補正なし）, ypos（補正あり）" << std::endl;
 
-	////////////////////////////////////////////////////////////////
-	//ロボット色抽出テスト用
-	//int h_value = 180,h_value2 = 0,s_value = 70,v_value = 70;
-	//cv::namedWindow("colorExt", 1);
-	//cv::createTrackbar("Hmax", "colorExt", &h_value, 180);
-	//cv::createTrackbar("Hmin", "colorExt", &h_value2, 180);
-	//cv::createTrackbar("S", "colorExt", &s_value, 255);
-	//cv::createTrackbar("V", "colorExt", &v_value, 255);
-	///////////////////////////////////////////////////////////////
+
 
 	std::cout << "a: 自動掃引" << std::endl;
 	std::cout << "s: 停止" << std::endl;
@@ -186,8 +173,7 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 
 	while (1){
 		imp.getFrame().copyTo(src);
-		//cv::resize(sample_img, sample_img, cv::Size(), 0.15, 0.15); //テスト画像用（SOM）
-		//sample_img.copyTo(src); //テスト画像用（SOM）
+
 		if (frameNum % 1 == 0){
 			if (_kbhit()){
 				command = _getch();
@@ -196,11 +182,14 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 					std::cout << "停止" << std::endl << std::endl;
 				}
 				if (command == 'q') {
-					xbee.sentManualCommand(byte(0x01), arduino);
-					std::cout << "終了 " << std::endl << std::endl;
+					//xbee.sentManualCommand(byte(0x01), arduino);
+					std::cout << "プログラムを終了します " << std::endl << std::endl;
+
 					cv::destroyAllWindows();
 					ofs.close(); //@comment ファイルストリームの解放
-					break;
+					
+					exit(0);
+					system("exit");
 				}
 				if (command == 'a') {
 					xbee.sentManualCommand(byte(0x01), arduino);
@@ -305,13 +294,6 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 			
 			cv::waitKey(1);
 
-			//@comment "q"を押したらプログラム終了
-			//if (src.empty() || cv::waitKey(50) == 113)
-			//{
-			//	cv::destroyAllWindows();
-			//	ofs.close(); //@comment ファイルストリームの解放
-			//	break;
-			//}
 		}
 		frameNum++;
 	} 

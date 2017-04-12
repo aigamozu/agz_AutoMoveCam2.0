@@ -2,6 +2,7 @@
 
 //xbeeの初期設定
 Xbee_com::Xbee_com(LPCSTR com, HANDLE &arduino){
+	// COMポートオープン
 	openCOM(com, arduino);
 
 	//送受信バッファ初期化
@@ -11,7 +12,7 @@ Xbee_com::Xbee_com(LPCSTR com, HANDLE &arduino){
 		system("PAUSE");
 		exit(0);
 	}
-
+	//COMポートが正常に処理されない場合の処理
 	if (!PurgeComm(arduino, PURGE_TXABORT | PURGE_RXABORT | PURGE_TXCLEAR | PURGE_RXCLEAR)) {
 		printf("CLEAR FAILED\n");
 		CloseHandle(arduino);
@@ -20,13 +21,13 @@ Xbee_com::Xbee_com(LPCSTR com, HANDLE &arduino){
 
 	//基本通信条件の設定
 	DCB dcb;
-	GetCommState(arduino, &this->dcb);
-	this->dcb.DCBlength = sizeof(DCB);
-	this->dcb.BaudRate = 57600;
-	this->dcb.fBinary = TRUE;
-	this->dcb.ByteSize = 8;
-	this->dcb.fParity = NOPARITY;
-	this->dcb.StopBits = ONESTOPBIT;
+	GetCommState(arduino, &this->dcb);  /*COMポートの状態取得*/
+	this->dcb.DCBlength = sizeof(DCB);  /*DCBのサイズの動的確保*/
+	this->dcb.BaudRate = 57600;			/*ボーレートの設定*/
+	this->dcb.fBinary = TRUE;			/*バイナリーモードの設定*/
+	this->dcb.ByteSize = 8;				/*バイトサイズの設定*/
+	this->dcb.fParity = NOPARITY;		/*パリティービットの設定*/
+	this->dcb.StopBits = ONESTOPBIT;	/*ストップビットの設定*/
 
 	if (!SetCommState(arduino, &this->dcb)) {
 		printf("SetCommState FAILED\n");
@@ -34,7 +35,6 @@ Xbee_com::Xbee_com(LPCSTR com, HANDLE &arduino){
 		system("PAUSE");
 		exit(0);
 	}
-
 }
 
 //モードの切り替え関数

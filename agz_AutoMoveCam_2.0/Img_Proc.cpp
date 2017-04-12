@@ -3,7 +3,10 @@
 
 //カメラの設定を行うコンストラクタ
 Img_Proc::Img_Proc(int camId){
+	
 	this->cap = cv::VideoCapture(camId);
+	//cv::VideoCapture cap;
+	//int camOpen = cap.open("http://172.16.0.254:9176/video?x.mipeg");
 	cap.set(CV_CAP_PROP_FRAME_WIDTH, 640); //@comment webカメラの横幅を設定
 	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480); //@comment webカメラの縦幅を設定
 
@@ -137,6 +140,7 @@ void Img_Proc::colorExtraction(cv::UMat &src, cv::UMat &dst,
 	cv::cvtColor(src, colorImage, code);
 
 	lower[0] = ch1Lower;
+
 	lower[1] = ch2Lower;
 	lower[2] = ch3Lower;
 
