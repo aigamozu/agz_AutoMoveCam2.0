@@ -54,7 +54,8 @@ void SOM::Init(cv::Mat &src){
 
 //透視投影変換前の画像に対して
 void SOM::Init2(cv::Mat &src){
-	std::cout << "掃引マップ生成開始" << std::endl << std::endl;
+	std::cout<<std::endl << "--------------------------------------------------------------"<< std::endl;
+	std::cout<< std::endl << " 掃引マップ生成開始" << std::endl << std::endl;
 	cv::Mat dst;
 	int calcNeuronNum; //近傍ニューロンの番号を取得
 	std::vector<Neuron> storeNeuron; //ニューロンの格納
@@ -90,7 +91,9 @@ void SOM::Init2(cv::Mat &src){
 	calcsom(width, height, storeNeuron, dst, src); //somの計算
 	this->som = storeNeuron;
 	std::cout << std::endl << std::endl;
-	std::cout << "掃引マップ生成終了" << std::endl;
+	std::cout << " 掃引マップ生成終了" << std::endl << std::endl;
+
+	std::cout << "--------------------------------------------------------------" << std::endl<<std::endl;
 
 }
 
@@ -179,7 +182,7 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 
 	std::vector<Neuron> defo = som;
 	float t = 1;
-	static float max_t = 35000;
+	static float max_t = 36000;
 	int index = 0;
 	int count = 0;
 	float dist = 0;
@@ -377,12 +380,20 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 			cv::circle(cpimg, som[it].p, 3, cv::Scalar(255, 0, 0), -1, CV_AA);
 		}
 		cv::circle(cpimg, som[index].p, 5, cv::Scalar(0, 255, 255), -1, CV_AA);
-		if (int(t) % 500 == 0){
-
+		if (int(t) % 1000 == 0){
+			int process;
 			std::cout << "*";
-			showSOM(index, linked, defo, t);
-			cv::imshow("s", cpimg);
-			cv::waitKey(10);
+			
+			process = t / max_t * 100;
+			
+			if (process == 25 || process == 50 || process == 75){
+				std::cout <<" "<<  process << "% ";
+			}
+
+
+			//showSOM(index, linked, defo, t);
+			//cv::imshow("s", cpimg);
+			//cv::waitKey(10);
 		}
 
 		t++;

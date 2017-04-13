@@ -5,8 +5,10 @@
 #include <fstream>
 #include <time.h>
 
+//using namespace System;
+
 #define GRAVITY 1      //画像中の領域 : 0  注目領域 : 1
-#define CAM_ID 1	   //カメラID
+#define CAM_ID 0	   //カメラID
 const LPCSTR com = "COM3";		//COMポート名
 std::vector<cv::Point2f> Pos;	//水田の四隅の点
 std::vector<cv::Point2f> Pos2;
@@ -55,7 +57,7 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 	case CV_EVENT_LBUTTONDOWN:
 		Pos.push_back(cv::Point2f(x, y));
 		drawPoint(image, cv::Point2i(x, y));
-		std::cout << ++count << " : " << "x : " << x << ", y : " << y << std::endl;
+		std::cout <<" "<< ++count << "点目 : " << "x : " << x << ", y : " << y << std::endl;
 		if (count > 3){
 			cv::imshow("getCoordinates", *image);
 			cv::waitKey(200);
@@ -69,8 +71,8 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 		if (count < 4){
 
 			std::cout << std::endl;
-			std::cout << "4点以上指定してください" << std::endl<<std::endl;
-			std::cout << "何かキーを押してください"<< std::endl;
+			std::cout << " 4点以上指定してください" << std::endl<<std::endl;
+			std::cout << " 何かキーを押してください"<< std::endl;
 			
 			exit(1);
 
@@ -83,6 +85,7 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 
 //画像を取得し,水田領域を設定
 void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
+
 	int width=9, height=9;
 	cv::Mat field;
 	cv::UMat src_frame, dst_img;
@@ -101,12 +104,15 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 		imp.getFrame().copyTo(src_frame);//@comment 1フレーム取得
 	}
 
-	std::cout << "水田の領域を左下から時計回りになるように４点クリックしてください" << std::endl;
+	std::cout << std::endl;
+	std::cout << " 水田の領域を左下から時計回りになるように４点クリックしてください" << std::endl;
+	std::cout << " 間違えた場合はプログラムを再起動してください" << std::endl<<std::endl;
 
 	//------------------座標取得-----------------------------------------------
 	//画像中からマウスで4 ~ 10点を取得その後右クリックすると変換処理が開始する
 	cv::namedWindow("getCoordinates");
 	cv::imshow("getCoordinates", src_frame);
+	cv::moveWindow("getCoordinates", 750, 0);
 	src_frame.copyTo(field);
 	cv::setMouseCallback("getCoordinates", getCoordinates, (void *)&field);
 
@@ -167,9 +173,9 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 
 
 
-	std::cout << "a: 自動掃引" << std::endl;
-	std::cout << "s: 停止" << std::endl;
-	std::cout << "q もしくはウィンドウ右上の×ボタン : 終了" << std::endl;
+	std::cout << " a: 自動掃引" << std::endl;
+	std::cout << " s: 停止" << std::endl;
+	std::cout << " q もしくはウィンドウ右上の×ボタン : 終了" << std::endl;
 
 	while (1){
 		imp.getFrame().copyTo(src);
@@ -179,11 +185,11 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 				command = _getch();
 				if (command == 's') {
 					xbee.sentManualCommand(byte(0x00), arduino);
-					std::cout << "停止" << std::endl << std::endl;
+					std::cout << " 停止" << std::endl << std::endl;
 				}
 				if (command == 'q') {
 					//xbee.sentManualCommand(byte(0x01), arduino);
-					std::cout << "プログラムを終了します " << std::endl << std::endl;
+					std::cout << " プログラムを終了します " << std::endl << std::endl;
 
 					cv::destroyAllWindows();
 					ofs.close(); //@comment ファイルストリームの解放
@@ -193,7 +199,7 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 				}
 				if (command == 'a') {
 					xbee.sentManualCommand(byte(0x01), arduino);
-					std::cout << "自動掃引" << std::endl << std::endl;
+					std::cout << " 自動掃引" << std::endl << std::endl;
 				}
 			}
 			//@comment 画像をリサイズ(大きすぎるとディスプレイに入りらないため)
@@ -289,9 +295,12 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 
 			//---------------------表示部分----------------------------------------------
 
-			cv::imshow("dst_image", dst);//@comment 出力画像
-			cv::imshow("copyImg", copyImg);
-			
+
+			cv::imshow("camera_image", copyImg);//@comment 出力画像
+			cv::imshow("Transform_Img", dst);
+			cv::moveWindow("camera_image", 800,0);
+			cv::moveWindow("Transform_Img",800,520);
+
 			cv::waitKey(1);
 
 		}
