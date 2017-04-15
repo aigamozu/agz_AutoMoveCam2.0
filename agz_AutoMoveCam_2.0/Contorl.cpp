@@ -9,17 +9,17 @@
 //	
 ////////////////////////////////////////////////////////////////////////////////
 Control::Control(int w, int h){
-	//…“c‚Ìc‰¡•‚ğŠi”[
+	//æ°´ç”°ã®ç¸¦æ¨ªå¹…ã‚’æ ¼ç´
 	width = w;
 	height = h;
 
-	// ƒq[ƒgƒ}ƒbƒv—p”z—ñ‚Ìƒƒ‚ƒŠ“®“IŠm•Û
+	// ãƒ’ãƒ¼ãƒˆãƒãƒƒãƒ—ç”¨é…åˆ—ã®ãƒ¡ãƒ¢ãƒªå‹•çš„ç¢ºä¿
 	small_area = new int*[width / 100 * 5];
 	for (int i = 0; i < width / 100 * 5; i++){
 		small_area[i] = new int[height / 100 * 5];
 	}
 
-	// ƒq[ƒgƒ}ƒbƒv—p”z—ñ‚Ì‰Šú‰»
+	// ãƒ’ãƒ¼ãƒˆãƒãƒƒãƒ—ç”¨é…åˆ—ã®åˆæœŸåŒ–
 	for (int i = 0; i < width / 100 * 5; i++){
 		for (int j = 0; j < height / 100 * 5; j++){
 			small_area[i][j] = 0;
@@ -32,9 +32,9 @@ Control::Control(int w, int h){
 //
 //	is_updateTarget
 //	
-//	ƒƒ{ƒbƒg‚ªƒ^[ƒQƒbƒg‚Ì”¼Œa‚T‚OcmˆÈ“à‚É“ü‚Á‚½‚Æ‚«, Ÿ‚Ìƒ^[ƒQƒbƒg‚ÉˆÚ‚é.
+//	ãƒ­ãƒœãƒƒãƒˆãŒã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®åŠå¾„ï¼•ï¼cmä»¥å†…ã«å…¥ã£ãŸã¨ã, æ¬¡ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«ç§»ã‚‹.
 // 
-// return : true or false@		( true : ƒ^[ƒQƒbƒg‚É“ü‚Á‚½, false : “ü‚Á‚Ä‚¢‚È‚¢ )
+// return : true or falseã€€		( true : ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«å…¥ã£ãŸ, false : å…¥ã£ã¦ã„ãªã„ )
 ////////////////////////////////////////////////////////////////////////////////
 bool Control::is_updateTarget(void){
 
@@ -45,7 +45,7 @@ bool Control::is_updateTarget(void){
 		int dy = nowPoint.y - nowTarget_itr->point.y;
 		double d = sqrt(dx * dx + dy * dy);
 
-		// ƒ^[ƒQƒbƒg‚Ì”¼Œa‚T‚OcmˆÈ“à‚Ì—Ìˆæ‚É“ü‚Á‚½‚ç–K–âŠ®—¹->ƒ^[ƒQƒbƒg‚ğˆÚ‚·
+		// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®åŠå¾„ï¼•ï¼cmä»¥å†…ã®é ˜åŸŸã«å…¥ã£ãŸã‚‰è¨ªå•å®Œäº†->ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’ç§»ã™
 		if (d < 50.0) {
 			result = true;
 			nowTarget_itr++;
@@ -53,31 +53,31 @@ bool Control::is_updateTarget(void){
 	}
 
 	if (PROGRAM == 1){
-		// ‰E‘¤‚Ìƒ^[ƒQƒbƒg‚ÉŒü‚©‚Á‚Ä‚¢‚éê‡
+		// å³å´ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«å‘ã‹ã£ã¦ã„ã‚‹å ´åˆ
 		if (nowTarget_itr->n % 2){
-			// ‰E‘¤‚Ìƒ^[ƒQƒbƒg‹æŠÔ‚É“ü‚Á‚½‚Æ‚«
+			// å³å´ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆåŒºé–“ã«å…¥ã£ãŸã¨ã
 			if (width - 200 < nowPoint.x && nowPoint.x < width - 100){
 				if (50 < nowPoint.y && nowPoint.y < height - 50){
 					result = true;
-					// ƒ^[ƒQƒbƒg‚ÌXV
+					// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®æ›´æ–°
 					nowTarget_itr++;
 				}
 			}
 		}
-		// ¶‘¤‚Ìƒ^[ƒQƒbƒg‚ÉŒü‚©‚Á‚Ä‚¢‚éê‡
+		// å·¦å´ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«å‘ã‹ã£ã¦ã„ã‚‹å ´åˆ
 		else{
-			// ‰E‘¤‚Ìƒ^[ƒQƒbƒg‹æŠÔ‚É“ü‚Á‚½‚Æ‚«
+			// å³å´ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆåŒºé–“ã«å…¥ã£ãŸã¨ã
 			if (100 < nowPoint.x && nowPoint.x < 200){
 				if (50 < nowPoint.y && nowPoint.y < height - 50){
 					result = true;
-					// ƒ^[ƒQƒbƒg‚ÌXV
+					// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®æ›´æ–°
 					nowTarget_itr++;
 				}
 			}
 		}
 	}
 
-	// ÅŒã‚Ìƒ^[ƒQƒbƒg‚Ü‚Å–K–â‚µ‚½‚çÅ‰‚Ìƒ^[ƒQƒbƒg‚É–ß‚é
+	// æœ€å¾Œã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¾ã§è¨ªå•ã—ãŸã‚‰æœ€åˆã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«æˆ»ã‚‹
 	if (nowTarget_itr == allTarget.end()){
 		nowTarget_itr = allTarget.begin();
 	}
@@ -90,35 +90,35 @@ bool Control::is_updateTarget(void){
 //
 //	robot_action
 //	
-//	ƒƒ{ƒbƒg‚Ì“®ì‚ğŒˆ’è‚·‚é.
+//	ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œã‚’æ±ºå®šã™ã‚‹.
 //
-//  return : int ( ƒƒ{ƒbƒg‚Ì“®ì”Ô† )
+//  return : int ( ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œç•ªå· )
 ////////////////////////////////////////////////////////////////////////////////
 int Control::robot_action(cv::Point2i Previous){
 
-	// ƒxƒNƒgƒ‹
+	// ãƒ™ã‚¯ãƒˆãƒ«
 	cv::Point2i P0 = nowPoint - Previous;
 	cv::Point2i P1 = nowTarget_itr->point - nowPoint;
 
-	// P0‚ÆP1‚Ì‚È‚·Šp‚ğ“àÏ‚ğ—p‚¢‚Ä‹‚ß‚é
+	// P0ã¨P1ã®ãªã™è§’ã‚’å†…ç©ã‚’ç”¨ã„ã¦æ±‚ã‚ã‚‹
 	double angle = acos(P0.dot(P1) / (sqrt(P0.x * P0.x + P0.y * P0.y) * sqrt(P1.x * P1.x + P1.y * P1.y))) / CV_PI * 180;
 
-	// ƒƒ{ƒbƒg‚Ìis•ûŒü‚É‘Î‚µ‚Äƒ^[ƒQƒbƒg‚ª¶•ûŒü‚É‚ ‚é‚Æ‚«
+	// ãƒ­ãƒœãƒƒãƒˆã®é€²è¡Œæ–¹å‘ã«å¯¾ã—ã¦ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒå·¦æ–¹å‘ã«ã‚ã‚‹ã¨ã
 	if (P0.cross(P1) < 0) {
 		angle = -angle;
 	}
 
-	// ƒƒ{ƒbƒg‚Ìis•ûŒü‚É‘Î‚µ‚Ä‘O•ûŒü‚Éƒ^[ƒQƒbƒg‚ª‚ ‚é
+	// ãƒ­ãƒœãƒƒãƒˆã®é€²è¡Œæ–¹å‘ã«å¯¾ã—ã¦å‰æ–¹å‘ã«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒã‚ã‚‹
 	if (-30 < angle && angle < 30) {
 		action = "f";
 		return 1;
 	}
-	// ƒƒ{ƒbƒg‚Ìis•ûŒü‚É‘Î‚µ‚Ä‰E•ûŒü‚Éƒ^[ƒQƒbƒg‚ª‚ ‚é
+	// ãƒ­ãƒœãƒƒãƒˆã®é€²è¡Œæ–¹å‘ã«å¯¾ã—ã¦å³æ–¹å‘ã«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒã‚ã‚‹
 	else if (angle >= 30) {
 		action = "r";
 		return 2;
 	}
-	// ƒƒ{ƒbƒg‚Ìis•ûŒü‚É‘Î‚µ‚Ä¶•ûŒü‚Éƒ^[ƒQƒbƒg‚ª‚ ‚é
+	// ãƒ­ãƒœãƒƒãƒˆã®é€²è¡Œæ–¹å‘ã«å¯¾ã—ã¦å·¦æ–¹å‘ã«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒã‚ã‚‹
 	else {
 		action = "l";
 		return 4;
@@ -129,14 +129,14 @@ int Control::robot_action(cv::Point2i Previous){
 //
 //	area_count
 //	
-//	ƒƒ{ƒbƒg‚Ì–K–â‰ñ”‚ğ‹‚ß‚é.
+//	ãƒ­ãƒœãƒƒãƒˆã®è¨ªå•å›æ•°ã‚’æ±‚ã‚ã‚‹.
 //
-//  return : cv::Point2i ( ƒƒ{ƒbƒg‚ÌÀ•W )
+//  return : cv::Point2i ( ãƒ­ãƒœãƒƒãƒˆã®åº§æ¨™ )
 ////////////////////////////////////////////////////////////////////////////////
 cv::Point2i Control::area_count(void){
 
 	cv::Point2i p;
-	// ˆÊ’uî•ñ nowPoint‚©‚ç”z—ñ‚Ì“Y‚¦š”Ô†‚ğ‹‚ß‚é
+	// ä½ç½®æƒ…å ± nowPointã‹ã‚‰é…åˆ—ã®æ·»ãˆå­—ç•ªå·ã‚’æ±‚ã‚ã‚‹
 	for (int i = 0; i < width / 100 * 5; i++){
 		if (i * 20 <= nowPoint.x && nowPoint.x < (i + 1) * 20){
 			p.x = i;
@@ -149,7 +149,7 @@ cv::Point2i Control::area_count(void){
 			break;
 		}
 	}
-	// –K–â‰ñ”‚ÌXV
+	// è¨ªå•å›æ•°ã®æ›´æ–°
 	small_area[p.x][p.y] ++;
 	return p;
 }
@@ -158,21 +158,21 @@ cv::Point2i Control::area_count(void){
 //
 //	is_out
 //	
-//	ƒƒ{ƒbƒg‚ª“à‘¤—Ìˆæ“à‚É‚¢‚é‚©‚¢‚È‚¢‚©’²‚×‚é.
+//	ãƒ­ãƒœãƒƒãƒˆãŒå†…å´é ˜åŸŸå†…ã«ã„ã‚‹ã‹ã„ãªã„ã‹èª¿ã¹ã‚‹.
 //
 //	return : void
 ////////////////////////////////////////////////////////////////////////////////
 void Control::is_out(void){
-	// l‹÷‚ÌÀ•W
+	// å››éš…ã®åº§æ¨™
 	cv::Point2i A = { 100, height - 100 }, B = { 100, 100 }, C = { height - 100, 100 }, D = { height - 100, height - 100 };
-	// ƒxƒNƒgƒ‹
+	// ãƒ™ã‚¯ãƒˆãƒ«
 	cv::Point2i BA = A - B, BC = C - B, BP = nowPoint - B;
 	cv::Point2i DC = C - D, DA = A - D, DP = nowPoint - D;
 
 	int c1, c2, c3, c4;
 	bool flag1 = false, flag2 = false;
 
-	// ŠOÏ‚ÌŒvZ
+	// å¤–ç©ã®è¨ˆç®—
 	c1 = BA.cross(BP);
 	c2 = BP.cross(BC);
 	c3 = DC.cross(DP);
@@ -194,13 +194,13 @@ void Control::is_out(void){
 //
 //	plot_target
 //	
-//	ƒ^[ƒQƒbƒg‚Æƒƒ{ƒbƒg‚Ìó‘Ô‚ğƒvƒƒbƒg‚·‚é.
+//	ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ãƒ­ãƒœãƒƒãƒˆã®çŠ¶æ…‹ã‚’ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹.
 //
 //  return : void 
 ////////////////////////////////////////////////////////////////////////////////
 void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
 
-	// ‚·‚×‚Ä‚Ìƒ^[ƒQƒbƒg‚Ìƒvƒƒbƒgi…Fj
+	// ã™ã¹ã¦ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ãƒ—ãƒ­ãƒƒãƒˆï¼ˆæ°´è‰²ï¼‰
 	for (std::vector<target>::iterator itr = allTarget.begin(); itr != allTarget.end(); itr++) {
 		cv::putText(img, std::to_string(itr->n), cv::Point(itr->point), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 0), 0.5, CV_AA);
 		if(itr->point.x >= width || itr->point.y >= height){
@@ -208,13 +208,13 @@ void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
 		}
 	}
 
-	// 1ƒtƒŒ[ƒ€‘O‚ÌÀ•W‚Æ‚ÌˆÚ“®—Ê‚ğü‚Å•\Œ»
+	// 1ãƒ•ãƒ¬ãƒ¼ãƒ å‰ã®åº§æ¨™ã¨ã®ç§»å‹•é‡ã‚’ç·šã§è¡¨ç¾
 	line(img, nowPoint, Previous, cv::Scalar(255, 0, 0), 2, CV_AA);
 
-	// “àŠO”»’èŒ‹‰Ê‚Ì•\¦
+	// å†…å¤–åˆ¤å®šçµæœã®è¡¨ç¤º
 //	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
-	// ƒƒ{ƒbƒg‚Ì“®ì‚Ì•\¦
+	// ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œã®è¡¨ç¤º
 //	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 }
@@ -223,7 +223,7 @@ void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
 //
 //	plot_transform_target
 //	
-//  ‹tË‰e•ÏŠ·Œã‚ÌSOM‚ğ•`‰æ
+//  é€†å°„å½±å¤‰æ›å¾Œã®SOMã‚’æç”»
 // 
 //  return : void 
 ////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +231,7 @@ void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
 void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat H){
 	std::vector<target> t = allTarget;
 	
-	// H = [3,3] s—ñ
+	// H = [3,3] è¡Œåˆ—
 	double a = H.at<double>(0, 0);
 	double b = H.at<double>(0, 1);
 	double c = H.at<double>(0, 2);
@@ -243,7 +243,7 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 	double i = H.at<double>(2, 2);
 
 
-	//SOM‚Ì‘Sƒjƒ…[ƒƒ“‚ÌÀ•W‚ğ‹t•ÏŠ·
+	//SOMã®å…¨ãƒ‹ãƒ¥ãƒ¼ãƒ­ãƒ³ã®åº§æ¨™ã‚’é€†å¤‰æ›
 	for (int j = 0; j < t.size(); j++){
 		
 		cv::Point2f temp = t[j].point;
@@ -256,9 +256,9 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 	}
 
 
-	// ¦ƒ^[ƒQƒbƒg‚É‘Î‚µ‚Ä‚àÀ•W•ÏŠ·‚ğ“K—p
+	// â€»ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã«å¯¾ã—ã¦ã‚‚åº§æ¨™å¤‰æ›ã‚’é©ç”¨
 
-	// Œ»İŒü‚©‚¤‚×‚«ƒ^[ƒQƒbƒg‚Ìƒvƒƒbƒgi•j
+	// ç¾åœ¨å‘ã‹ã†ã¹ãã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ãƒ—ãƒ­ãƒƒãƒˆï¼ˆé»’ï¼‰
 	cv::Point2f temp = nowTarget_itr->point;
 	cv::Point2f target, pre, now;
 	target.x = (temp.x * a + temp.y * b + c) / float(temp.x * g + temp.y * h + i);
@@ -273,11 +273,11 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 	now.y = (temp.x * d + temp.y * e + f) / float(temp.x * g + temp.y * h + i);
 	line(img, now, pre, cv::Scalar(255, 0, 0), 2, CV_AA);
 
-	// “àŠO”»’èŒ‹‰Ê‚Ì•\¦
+	// å†…å¤–åˆ¤å®šçµæœã®è¡¨ç¤º
 
 //	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
-	// ƒƒ{ƒbƒg‚Ì“®ì‚Ì•\¦
+	// ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œã®è¡¨ç¤º
 //	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 }
@@ -286,7 +286,7 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 //
 //	heatmap
 //	
-//	ƒq[ƒgƒ}ƒbƒvì¬
+//	ãƒ’ãƒ¼ãƒˆãƒãƒƒãƒ—ä½œæˆ
 // 
 //  return : void
 ////////////////////////////////////////////////////////////////////////////////
@@ -294,30 +294,30 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 void Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 
 
-	//	‚Pƒ}ƒX‚ÌƒsƒNƒZƒ‹” 10x10
+	//	ï¼‘ãƒã‚¹ã®ãƒ”ã‚¯ã‚»ãƒ«æ•° 10x10
 	int size_x = 10 * 500 / width, size_y = 10 * 500 / height;
 	static int max_count = 50;
 
-	// ”z—ñ‚Ì“Y‚¦š”Ô†‚©‚çÀ•W‚ğ‹‚ßA‚Q‚ÅŠ„‚é
+	// é…åˆ—ã®æ·»ãˆå­—ç•ªå·ã‹ã‚‰åº§æ¨™ã‚’æ±‚ã‚ã€ï¼’ã§å‰²ã‚‹
 	int x = (pos.x * 20 + 10) * 500 / width;
 	int y = (pos.y * 20 + 10) * 500 / height;
-	// –K–â‰ñ”
+	// è¨ªå•å›æ•°
 	int count = small_area[pos.x][pos.y];
 
-	// ƒJƒEƒ“ƒg‚ÌÅ‘å’l‚ÌXV
+	// ã‚«ã‚¦ãƒ³ãƒˆã®æœ€å¤§å€¤ã®æ›´æ–°
 	if (count > max_count){
 		max_count = count;
 	}
 
-	// ‰æ‘œ‚ÌƒTƒCƒY•ª‚¾‚¯ƒ‹[ƒv‚ğ‰ñ‚·
+	// ç”»åƒã®ã‚µã‚¤ã‚ºåˆ†ã ã‘ãƒ«ãƒ¼ãƒ—ã‚’å›ã™
 	for (int i = y - size_y; i < y + size_y; i++){
-		cv::Vec3b* ptr = img->ptr<cv::Vec3b>(i); // is–Ú‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
+		cv::Vec3b* ptr = img->ptr<cv::Vec3b>(i); // iè¡Œç›®ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 		for (int j = x - size_x; j < x + size_x; j++){
-			// count‚ğF‘Š‚É•ÏŠ·
+			// countã‚’è‰²ç›¸ã«å¤‰æ›
 			int brightness = count;
 			float h = 240.0 - 240.0 / max_count * (float)brightness;
 
-			// HSV -> BGR ‚É•ÏŠ·
+			// HSV -> BGR ã«å¤‰æ›
 			float s = 1.0;
 			float v = 1.0;
 			const float u = v * 255.0;
@@ -330,7 +330,7 @@ void Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 			cv::Vec3b bgr = ptr[j];
 			
 			
-			//–K–â‰ñ”‚É‰‚¶‚Äƒvƒƒbƒg‚ÌF‚ğ•Ï‰»
+			//è¨ªå•å›æ•°ã«å¿œã˜ã¦ãƒ—ãƒ­ãƒƒãƒˆã®è‰²ã‚’å¤‰åŒ–
 			switch (id){
 			case 0:
 				ptr[j] = cv::Vec3b(p, t, u);
@@ -361,14 +361,14 @@ void Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 		}
 	}
 
-	// ‹æ‰æ‚Ìƒvƒƒbƒg
+	// åŒºç”»ã®ãƒ—ãƒ­ãƒƒãƒˆ
 	for (int i = 0; i <= width; i += 100) {
 		for (int j = 0; j <= height; j += 100) {
 			line(*img, cv::Point(i * 500 / width, j * 500 / height), cv::Point(i * 500 / width, 500), cv::Scalar(200, 200, 200), 2);
 			line(*img, cv::Point(i * 500 / width, j * 500 / height), cv::Point(500, j * 500 / height), cv::Scalar(200, 200, 200), 2);
 		}
 	}
-	// ‰æ‘œ‚ÌŒ‹‡ bar : ƒJƒ‰[ƒo[, concat_img : ƒq[ƒgƒ}ƒbƒv
+	// ç”»åƒã®çµåˆ bar : ã‚«ãƒ©ãƒ¼ãƒãƒ¼, concat_img : ãƒ’ãƒ¼ãƒˆãƒãƒƒãƒ—
 	vconcat(*bar, *img, concat_img);
 
 	int value = max_count / 5;
@@ -383,7 +383,7 @@ void Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 //
 //	set function
 //
-//  ‘|ˆø•ûj‚Ì‰Šúİ’è
+//  æƒå¼•æ–¹é‡ã®åˆæœŸè¨­å®š
 //
 ////////////////////////////////////////////////
 
@@ -395,7 +395,7 @@ void Control::set_target(SOM som) {
 	int num = 0;
 	if (PROGRAM == 0){
 		for (int j = 0; j < (height / 100) - 2; j++) {
-			// ¶‚©‚ç‰E‚Öƒ^[ƒQƒbƒg‚ğİ’è‚·‚é
+			// å·¦ã‹ã‚‰å³ã¸ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¨­å®šã™ã‚‹
 			if (j % 2 == 0) {
 				for (int i = 0; i < (width / 100) - 2; i++) {
 					t.point = { (i + 1) * width / (width / 100) + 50, height - (j + 1) * height / (height / 100) - 50 };
@@ -404,7 +404,7 @@ void Control::set_target(SOM som) {
 					num++;
 				}
 			}
-			// ‰E‚©‚ç¶‚Öƒ^[ƒQƒbƒg‚ğİ’è‚·‚é
+			// å³ã‹ã‚‰å·¦ã¸ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¨­å®šã™ã‚‹
 			else {
 				for (int i = (width / 100) - 3; i >= 0; i--) {
 					t.point = { (i + 1) * width / (width / 100) + 50, height - (j + 1) * height / (height / 100) - 50 };
@@ -418,13 +418,13 @@ void Control::set_target(SOM som) {
 
 	if (PROGRAM == 1){
 		for (int i = 0; i < (height / 100) - 2; i++){
-			// ¶‘¤‚Ìƒ^[ƒQƒbƒgİ’è
+			// å·¦å´ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆè¨­å®š
 			t.point = { 150, height - (i + 1) * height / (height / 100) - 50 };
 			t.n = num;
 			allTarget.push_back(t);
 			num++;
 
-			// ‰E‘¤‚Ìƒ^[ƒQƒbƒgİ’è
+			// å³å´ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆè¨­å®š
 			t.point = { width - 150, height - (i + 1) * height / (height / 100) - 50 };
 			t.n = num;
 			allTarget.push_back(t);
@@ -433,10 +433,10 @@ void Control::set_target(SOM som) {
 	}
 
 	if (PROGRAM == 2){
-		for (int i = 1; i < (height / 100)-1; i++) {
-			// ¶‚©‚ç‰E‚Öƒ^[ƒQƒbƒg‚ğİ’è‚·‚é
-			if (i % 2 != 0){
-				for (int j = 1; j < (width / 100)-1; j++) {
+		for (int j = 1; j < (height / 100)-1; j++) {
+			// å·¦ã‹ã‚‰å³ã¸ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¨­å®šã™ã‚‹
+			if (j % 2 != 0){
+				for (int i = 1; i < (width / 100)-1; i++) {
 
 					t.point = som.calc_centerPoint((width / 100 + 1)*i + j,t.neighbor);
 					t.n = num;
@@ -446,9 +446,9 @@ void Control::set_target(SOM som) {
 
 				}
 			}
-			// ‰E‚©‚ç¶‚Öƒ^[ƒQƒbƒg‚ğİ’è‚·‚é
+			// å³ã‹ã‚‰å·¦ã¸ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¨­å®šã™ã‚‹
 			else {
-				for (int j = (width / 100) - 2; j >= 1; j--) {
+				for (int i = (width / 100) - 2; i >= 1; i--) {
 					t.point = som.calc_centerPoint((width / 100 + 1)*i + j,t.neighbor);
 					t.n = num;
 					allTarget.push_back(t);
@@ -469,7 +469,7 @@ void Control::set_target(SOM som) {
 //
 //	set function
 //
-//  Œ»İ‚ÌÀ•W‚Ìİ’è
+//  ç¾åœ¨ã®åº§æ¨™ã®è¨­å®š
 ////////////////////////////////////////////////
 void Control::set_point(cv::Point2i p){
 	nowPoint = p;
@@ -479,7 +479,7 @@ void Control::set_point(cv::Point2i p){
 //
 //	get function
 //
-//  Œ»İ‚Ìƒ^[ƒQƒbƒg‚ÌƒCƒeƒŒ[ƒ^æ“¾
+//  ç¾åœ¨ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿å–å¾—
 ////////////////////////////////////////////////
 int Control::get_target(void){
 	return nowTarget_itr->n;
@@ -489,7 +489,7 @@ int Control::get_target(void){
 //
 //	get function
 //
-//  Œ»İ‚Ìƒ^[ƒQƒbƒg‚Ì‹ß–Tî•ñ‚ğæ“¾
+//  ç¾åœ¨ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®è¿‘å‚æƒ…å ±ã‚’å–å¾—
 ////////////////////////////////////////////////
 std::vector<int> Control::get_nowTargetArea(void){
 	return nowTarget_itr->neighbor;
