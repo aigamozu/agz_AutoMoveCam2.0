@@ -8,7 +8,7 @@
 //using namespace System;
 
 #define GRAVITY 1      //画像中の領域 : 0  注目領域 : 1
-#define CAM_ID 0	   //カメラID
+#define CAM_ID 1	   //カメラID
 const LPCSTR com = "COM3";		//COMポート名
 std::vector<cv::Point2f> Pos;	//水田の四隅の点
 std::vector<cv::Point2f> Pos2;
