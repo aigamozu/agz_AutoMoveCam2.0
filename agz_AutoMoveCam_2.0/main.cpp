@@ -1,4 +1,4 @@
-#include "Xbee_com.h"
+﻿#include "Xbee_com.h"
 #include "Img_proc.h"
 #include "Control.h"
 #include <conio.h>
