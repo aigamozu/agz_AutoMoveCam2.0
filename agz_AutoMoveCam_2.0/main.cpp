@@ -7,21 +7,21 @@
 
 //using namespace System;
 
-#define GRAVITY 1      //‰æ‘œ’†‚Ì—Ìˆæ : 0  ’–Ú—Ìˆæ : 1
-#define CAM_ID 1	   //ƒJƒƒ‰ID
-const LPCSTR com = "COM3";		//COMƒ|[ƒg–¼
-std::vector<cv::Point2f> Pos;	//…“c‚Ìl‹÷‚Ì“_
+#define GRAVITY 1      //ç”»åƒä¸­ã®é ˜åŸŸ : 0  æ³¨ç›®é ˜åŸŸ : 1
+#define CAM_ID 1	   //ã‚«ãƒ¡ãƒ©ID
+const LPCSTR com = "COM3";		//COMãƒãƒ¼ãƒˆå
+std::vector<cv::Point2f> Pos;	//æ°´ç”°ã®å››éš…ã®ç‚¹
 std::vector<cv::Point2f> Pos2;
 
 cv::Point2i target, P0[5] = { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }, P1 = { 0, 0 };
-cv::Point2i pre_point; // @comment Point\‘¢‘Ì<intŒ^>
-int action;			   //ƒƒ{ƒbƒg‚Ì“®ì•Ï” 1:‘Oi 2:‰Eù‰ñ 4:¶
+cv::Point2i pre_point; // @comment Pointæ§‹é€ ä½“<intå‹>
+int action;			   //ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œå¤‰æ•° 1:å‰é€² 2:å³æ—‹å› 4:å·¦
 
 SOM s = SOM();
 SOM s2 = SOM();
 
 
-// ƒf[ƒ^o—Í—pcsvƒtƒ@ƒCƒ‹–¼ì¬ŠÖ”@
+// ãƒ‡ãƒ¼ã‚¿å‡ºåŠ›ç”¨csvãƒ•ã‚¡ã‚¤ãƒ«åä½œæˆé–¢æ•°ã€€
 std::string setFilename(std::string str){
 	time_t now = time(NULL);
 	struct tm * pnow = localtime(&now);
@@ -29,35 +29,35 @@ std::string setFilename(std::string str){
 	std::string c = ".csv";
 	std::string data = "./data/";
 
-	//@comment sprintf‚ğg‚Á‚ÄintŒ^‚ğstring‚É•ÏŠ·
+	//@comment sprintfã‚’ä½¿ã£ã¦intå‹ã‚’stringã«å¤‰æ›
 	sprintf(time, "%d_%d_%d_%d_%d", pnow->tm_year + 1900, pnow->tm_mon + 1,
 		pnow->tm_mday, pnow->tm_hour, pnow->tm_min);
 
-	return data + str + time + c; //@comment ¶¬‚³‚ê‚½ƒtƒ@ƒCƒ‹–¼
+	return data + str + time + c; //@comment ç”Ÿæˆã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«å
 }
 
-// ƒ}ƒEƒXƒNƒŠƒbƒNæ“¾À•WˆÊ’u‚É‰~‚ğƒvƒƒbƒg
+// ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯å–å¾—åº§æ¨™ä½ç½®ã«å††ã‚’ãƒ—ãƒ­ãƒƒãƒˆ
 void drawPoint(cv::Mat* img, cv::Point2i point){
 	cv::circle(*img, point, 8, cv::Scalar(0, 255, 0), -1, CV_AA);
 	cv::imshow("getCoordinates", *img);
 }
 
-// …“c—Ìˆæ‚ÌÀ•Wæ“¾—pŠÖ”
+// æ°´ç”°é ˜åŸŸã®åº§æ¨™å–å¾—ç”¨é–¢æ•°
 void getCoordinates(int event, int x, int y, int flags, void* param)
 {
-	//ƒNƒŠƒbƒN“_•`‰æ‚Ì‚½‚ß‚Ì‰æ‘œ¶¬
+	//ã‚¯ãƒªãƒƒã‚¯ç‚¹æç”»ã®ãŸã‚ã®ç”»åƒç”Ÿæˆ
 	cv::Mat* image = static_cast<cv::Mat*>(param); 
 	static int count = 0;
 	
-	// 4“_ƒNƒŠƒbƒN‚³‚ê‚½ê‡‚Í’Êíˆ—‚ğs‚¤
-	// ƒNƒŠƒbƒN‚³‚ê‚È‚¢ê‡‚ÍƒGƒ‰[ˆ—‚ğs‚¤
+	// 4ç‚¹ã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸå ´åˆã¯é€šå¸¸å‡¦ç†ã‚’è¡Œã†
+	// ã‚¯ãƒªãƒƒã‚¯ã•ã‚Œãªã„å ´åˆã¯ã‚¨ãƒ©ãƒ¼å‡¦ç†ã‚’è¡Œã†
 
 	switch (event) {
-	// ¶ƒNƒŠƒbƒN‚ª‰Ÿ‚³‚ê‚½
+	// å·¦ã‚¯ãƒªãƒƒã‚¯ãŒæŠ¼ã•ã‚ŒãŸæ™‚
 	case CV_EVENT_LBUTTONDOWN:
 		Pos.push_back(cv::Point2f(x, y));
 		drawPoint(image, cv::Point2i(x, y));
-		std::cout <<" "<< ++count << "“_–Ú : " << "x : " << x << ", y : " << y << std::endl;
+		std::cout <<" "<< ++count << "ç‚¹ç›® : " << "x : " << x << ", y : " << y << std::endl;
 		if (count > 3){
 			cv::imshow("getCoordinates", *image);
 			cv::waitKey(200);
@@ -66,13 +66,13 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 		}
 		break;
 
-	// ‰EƒNƒŠƒbƒN‚³‚ê‚½‚Æ‚«
+	// å³ã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã¨ã
 	case CV_EVENT_RBUTTONDOWN:
 		if (count < 4){
 
 			std::cout << std::endl;
-			std::cout << " 4“_ˆÈãw’è‚µ‚Ä‚­‚¾‚³‚¢" << std::endl<<std::endl;
-			std::cout << " ‰½‚©ƒL[‚ğ‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢"<< std::endl;
+			std::cout << " 4ç‚¹ä»¥ä¸ŠæŒ‡å®šã—ã¦ãã ã•ã„" << std::endl<<std::endl;
+			std::cout << " ä½•ã‹ã‚­ãƒ¼ã‚’æŠ¼ã—ã¦ãã ã•ã„"<< std::endl;
 			
 			exit(1);
 
@@ -83,7 +83,7 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 }
 
 
-//‰æ‘œ‚ğæ“¾‚µ,…“c—Ìˆæ‚ğİ’è
+//ç”»åƒã‚’å–å¾—ã—,æ°´ç”°é ˜åŸŸã‚’è¨­å®š
 void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 
 	int width=9, height=9;
@@ -97,19 +97,19 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 
 	imp.setField(width, height);
 	nm30_init();
-	nm30_set_panorama_mode(1, 11); //@comment ‹›Šá•â³
+	nm30_set_panorama_mode(1, 11); //@comment é­šçœ¼è£œæ­£
 
-	//@comment n‚ß‚Ì‚P‚OƒtƒŒ[ƒ€‚Í“Ç‚İ”ò‚Î‚·
+	//@comment å§‹ã‚ã®ï¼‘ï¼ãƒ•ãƒ¬ãƒ¼ãƒ ã¯èª­ã¿é£›ã°ã™
 	for (int i = 0; i < 10; i++) {
-		imp.getFrame().copyTo(src_frame);//@comment 1ƒtƒŒ[ƒ€æ“¾
+		imp.getFrame().copyTo(src_frame);//@comment 1ãƒ•ãƒ¬ãƒ¼ãƒ å–å¾—
 	}
 
 	std::cout << std::endl;
-	std::cout << " …“c‚Ì—Ìˆæ‚ğ¶‰º‚©‚çŒv‰ñ‚è‚É‚È‚é‚æ‚¤‚É‚S“_ƒNƒŠƒbƒN‚µ‚Ä‚­‚¾‚³‚¢" << std::endl;
-	std::cout << " ŠÔˆá‚¦‚½ê‡‚ÍƒvƒƒOƒ‰ƒ€‚ğÄ‹N“®‚µ‚Ä‚­‚¾‚³‚¢" << std::endl<<std::endl;
+	std::cout << " æ°´ç”°ã®é ˜åŸŸã‚’å·¦ä¸‹ã‹ã‚‰æ™‚è¨ˆå›ã‚Šã«ãªã‚‹ã‚ˆã†ã«ï¼”ç‚¹ã‚¯ãƒªãƒƒã‚¯ã—ã¦ãã ã•ã„" << std::endl;
+	std::cout << " é–“é•ãˆãŸå ´åˆã¯ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’å†èµ·å‹•ã—ã¦ãã ã•ã„" << std::endl<<std::endl;
 
-	//------------------À•Wæ“¾-----------------------------------------------
-	//‰æ‘œ’†‚©‚çƒ}ƒEƒX‚Å4 ~ 10“_‚ğæ“¾‚»‚ÌŒã‰EƒNƒŠƒbƒN‚·‚é‚Æ•ÏŠ·ˆ—‚ªŠJn‚·‚é
+	//------------------åº§æ¨™å–å¾—-----------------------------------------------
+	//ç”»åƒä¸­ã‹ã‚‰ãƒã‚¦ã‚¹ã§4 ~ 10ç‚¹ã‚’å–å¾—ãã®å¾Œå³ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å¤‰æ›å‡¦ç†ãŒé–‹å§‹ã™ã‚‹
 	cv::namedWindow("getCoordinates");
 	cv::imshow("getCoordinates", src_frame);
 	cv::moveWindow("getCoordinates", 750, 0);
@@ -119,7 +119,7 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 
-	//------------------“§‹•ÏŠ·-----------------------------------------------
+	//------------------é€è¦–å¤‰æ›-----------------------------------------------
 
 	imp.Perspective(src_frame, dst_img, Pos);
 
@@ -133,7 +133,7 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 	Pos2.push_back(cv::Point(dst_img.cols - 5, 5));
 	Pos2.push_back(cv::Point(dst_img.cols - 5 , dst_img.rows - 5));
 
-	cv::Point pt2[10]; //”CˆÓ‚Ì4“_‚ğ”z—ñ‚ÉŠi”[
+	cv::Point pt2[10]; //ä»»æ„ã®4ç‚¹ã‚’é…åˆ—ã«æ ¼ç´
 	for (int i = 0; i < Pos2.size(); i++){
 		pt2[i] = Pos2[i];
 	}
@@ -147,35 +147,35 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 			ss2(j, i) = cv::Vec3b(255, 255, 255);
 		}
 	}
-	cv::fillConvexPoly(ss2, pt2, Pos.size(), cv::Scalar(200, 200, 200));//‘½ŠpŒ`‚ğ•`‰æ
+	cv::fillConvexPoly(ss2, pt2, Pos.size(), cv::Scalar(200, 200, 200));//å¤šè§’å½¢ã‚’æç”»
 	s2.Init2(ss2);
 	cv::destroyAllWindows();
 }
 
-//§Œäƒ‹[ƒv
+//åˆ¶å¾¡ãƒ«ãƒ¼ãƒ—
 void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
-	cv::Mat element = cv::Mat::ones(3, 3, CV_8UC1); //2’l‰æ‘œ–c’£—ps—ñ
+	cv::Mat element = cv::Mat::ones(3, 3, CV_8UC1); //2å€¤ç”»åƒè†¨å¼µç”¨è¡Œåˆ—
 	cv::Mat heatmap_img(cv::Size(500, 500), CV_8UC3, cv::Scalar(255, 255, 255));
-	int frameNum = 0;								//ƒtƒŒ[ƒ€”•Û•Ï”
+	int frameNum = 0;								//ãƒ•ãƒ¬ãƒ¼ãƒ æ•°ä¿æŒå¤‰æ•°
 	cv::UMat src, dst, colorExtra, pImg, binari_2, copyImg, copyImg2;
 	cv::Point2f sz = imp.getField();
 	Control control(sz.x, sz.y);
 	control.set_target(s2);
 	char command = 's';
 	int ypos;
-	int ydef = 0;	//•â³‚È‚µdSÀ•W’l
-	int num = 0;	// ƒ^[ƒQƒbƒg‚Ì–K–â‰ñ”XV
-	std::ofstream ofs(setFilename("Coordinate")); // @comment@ƒƒ{ƒbƒgÀ•W—pcsv
+	int ydef = 0;	//è£œæ­£ãªã—é‡å¿ƒåº§æ¨™å€¤
+	int num = 0;	// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®è¨ªå•å›æ•°æ›´æ–°
+	std::ofstream ofs(setFilename("Coordinate")); // @commentã€€ãƒ­ãƒœãƒƒãƒˆåº§æ¨™ç”¨csv
 
-	//ƒƒ{ƒbƒgÀ•Wcsv
+	//ãƒ­ãƒœãƒƒãƒˆåº§æ¨™csv
 	ofs << imp.getField().x << ", " << imp.getField().y << std::endl;
-	ofs << "x², y²i•â³‚È‚µj, yposi•â³‚ ‚èj" << std::endl;
+	ofs << "xè»¸, yè»¸ï¼ˆè£œæ­£ãªã—ï¼‰, yposï¼ˆè£œæ­£ã‚ã‚Šï¼‰" << std::endl;
 
 
 
-	std::cout << " a: ©“®‘|ˆø" << std::endl;
-	std::cout << " s: ’â~" << std::endl;
-	std::cout << " q ‚à‚µ‚­‚ÍƒEƒBƒ“ƒhƒE‰Eã‚Ì~ƒ{ƒ^ƒ“ : I—¹" << std::endl;
+	std::cout << " a: è‡ªå‹•æƒå¼•" << std::endl;
+	std::cout << " s: åœæ­¢" << std::endl;
+	std::cout << " q ã‚‚ã—ãã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å³ä¸Šã®Ã—ãƒœã‚¿ãƒ³ : çµ‚äº†" << std::endl;
 
 	while (1){
 		imp.getFrame().copyTo(src);
@@ -185,74 +185,74 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 				command = _getch();
 				if (command == 's') {
 					xbee.sentManualCommand(byte(0x00), arduino);
-					std::cout << " ’â~" << std::endl << std::endl;
+					std::cout << " åœæ­¢" << std::endl << std::endl;
 				}
 				if (command == 'q') {
 					//xbee.sentManualCommand(byte(0x01), arduino);
-					std::cout << " ƒvƒƒOƒ‰ƒ€‚ğI—¹‚µ‚Ü‚· " << std::endl << std::endl;
+					std::cout << " ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’çµ‚äº†ã—ã¾ã™ " << std::endl << std::endl;
 
 					cv::destroyAllWindows();
-					ofs.close(); //@comment ƒtƒ@ƒCƒ‹ƒXƒgƒŠ[ƒ€‚Ì‰ğ•ú
+					ofs.close(); //@comment ãƒ•ã‚¡ã‚¤ãƒ«ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®è§£æ”¾
 					
 					exit(0);
 					system("exit");
 				}
 				if (command == 'a') {
 					xbee.sentManualCommand(byte(0x01), arduino);
-					std::cout << " ©“®‘|ˆø" << std::endl << std::endl;
+					std::cout << " è‡ªå‹•æƒå¼•" << std::endl << std::endl;
 				}
 			}
-			//@comment ‰æ‘œ‚ğƒŠƒTƒCƒY(‘å‚«‚·‚¬‚é‚ÆƒfƒBƒXƒvƒŒƒC‚É“ü‚è‚ç‚È‚¢‚½‚ß)
+			//@comment ç”»åƒã‚’ãƒªã‚µã‚¤ã‚º(å¤§ãã™ãã‚‹ã¨ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã«å…¥ã‚Šã‚‰ãªã„ãŸã‚)
 			src.copyTo(copyImg);
 			cv::warpPerspective(src, dst, imp.getPersMat(), cv::Size(src.cols, src.rows), CV_INTER_LINEAR);
 			dst.copyTo(copyImg2);
 
-			//@comment hsv‚ğ—˜—p‚µ‚ÄÔF‚ğ’Šo
-			//“ü—Í‰æ‘œAo—Í‰æ‘œA•ÏŠ·AhÅ¬’lAhÅ‘å’lAsÅ¬’lAsÅ‘å’lAvÅ¬’lAvÅ‘å’l h:(0-180)ÀÛ‚Ì1/2
+			//@comment hsvã‚’åˆ©ç”¨ã—ã¦èµ¤è‰²ã‚’æŠ½å‡º
+			//å…¥åŠ›ç”»åƒã€å‡ºåŠ›ç”»åƒã€å¤‰æ›ã€hæœ€å°å€¤ã€hæœ€å¤§å€¤ã€sæœ€å°å€¤ã€sæœ€å¤§å€¤ã€væœ€å°å€¤ã€væœ€å¤§å€¤ h:(0-180)å®Ÿéš›ã®1/2
 			//imp.colorExtraction(dst, colorExtra, CV_BGR2HSV, h_value, h_value2, s_value, 255, v_value, 255);
 			imp.colorExtraction(dst, colorExtra, CV_BGR2HSV, 160, 10, 70, 255, 70, 255);
 			colorExtra.copyTo(pImg);
-			cv::cvtColor(colorExtra, colorExtra, CV_BGR2GRAY);//@comment ƒOƒŒ[ƒXƒP[ƒ‹‚É•ÏŠ·
+			cv::cvtColor(colorExtra, colorExtra, CV_BGR2GRAY);//@comment ã‚°ãƒ¬ãƒ¼ã‚¹ã‚±ãƒ¼ãƒ«ã«å¤‰æ›
 
-			//----------------------“ñ’l‰»-----------------------------------------------
+			//----------------------äºŒå€¤åŒ–-----------------------------------------------
 			cv::threshold(colorExtra, binari_2, 0, 255, CV_THRESH_BINARY);
-			cv::dilate(binari_2, binari_2, element, cv::Point(-1, -1), 3); //–c’£ˆ—3‰ñ ÅŒã‚Ìˆø”‚Å‰ñ”‚ğİ’è
+			cv::dilate(binari_2, binari_2, element, cv::Point(-1, -1), 3); //è†¨å¼µå‡¦ç†3å› æœ€å¾Œã®å¼•æ•°ã§å›æ•°ã‚’è¨­å®š
 
-			//---------------------–ÊÏŒvZ,dSæ“¾-----------------------------------------------
-			//æ“¾‚µ‚½—Ìˆæ‚Ì’†‚Åˆê”Ô–ÊÏ‚Ì‘å‚«‚¢‚à‚Ì‚ğ‘ÎÛ‚Æ‚µ‚Ä‚»‚Ì‘ÎÛ‚ÌdS‚ğ‹‚ß‚éB
+			//---------------------é¢ç©è¨ˆç®—,é‡å¿ƒå–å¾—-----------------------------------------------
+			//å–å¾—ã—ãŸé ˜åŸŸã®ä¸­ã§ä¸€ç•ªé¢ç©ã®å¤§ãã„ã‚‚ã®ã‚’å¯¾è±¡ã¨ã—ã¦ãã®å¯¾è±¡ã®é‡å¿ƒã‚’æ±‚ã‚ã‚‹ã€‚
 			cv::Point2i point = imp.serchMaxArea(binari_2, pImg);
 			if (!GRAVITY)
 			{
-				point = imp.calculate_center(binari_2);//@comment moment‚Å”’F•”•ª‚ÌdS‚ğ‹‚ß‚é
-				std::cout << "posion: " << point.x << " " << point.y << std::endl;//@comment dS“_‚Ì•\¦
+				point = imp.calculate_center(binari_2);//@comment momentã§ç™½è‰²éƒ¨åˆ†ã®é‡å¿ƒã‚’æ±‚ã‚ã‚‹
+				std::cout << "posion: " << point.x << " " << point.y << std::endl;//@comment é‡å¿ƒç‚¹ã®è¡¨ç¤º
 			}
 
 			if (point.x != 0) {
 				ypos = sz.y - (point.y + 6 * ((1000 / point.y) + 1));
-				ydef = sz.y - point.y;//@comment •â³‚È‚µ‚™dS
-				//std::cout << point.x << " " << ypos << std::endl; //@comment •ÏŠ·‰æ‘œ’†‚Å‚Ìƒƒ{ƒbƒg‚ÌÀ•W(dS)
-				ofs << point.x << ", " << ydef << ", " << ypos << std::endl; //@comment •ÏŠ·
+				ydef = sz.y - point.y;//@comment è£œæ­£ãªã—ï½™é‡å¿ƒ
+				//std::cout << point.x << " " << ypos << std::endl; //@comment å¤‰æ›ç”»åƒä¸­ã§ã®ãƒ­ãƒœãƒƒãƒˆã®åº§æ¨™(é‡å¿ƒ)
+				ofs << point.x << ", " << ydef << ", " << ypos << std::endl; //@comment å¤‰æ›
 			}
 
-			//---------------------ƒƒ{ƒbƒg‚Ì“®ìæ“¾------------------------------------
+			//---------------------ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œå–å¾—------------------------------------
 			//if (frame % 2 == 0){
 			P1 = cv::Point2f(point.x, sz.y - ydef);
 			if (P1.x != 0 && P1.y != 0) {
-				// ƒ^[ƒQƒbƒg‚ÌXV
+				// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®æ›´æ–°
 				if (control.is_updateTarget()){
 					//std::cout << "target number : " << control.get_target() << std::endl;
 				}
-				// Œ»İ‚Ìƒƒ{ƒbƒg‚ÌˆÊ’uî•ñ‚ÌXV
+				// ç¾åœ¨ã®ãƒ­ãƒœãƒƒãƒˆã®ä½ç½®æƒ…å ±ã®æ›´æ–°
 				control.set_point(P1);
 
-				// ƒƒ{ƒbƒg‚Ì“®ìŒˆ’è
+				// ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œæ±ºå®š
 				action = control.robot_action(P0[4]);
 
-				// ƒ^[ƒQƒbƒg‚Ì–K–â‰ñ”XV
+				// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®è¨ªå•å›æ•°æ›´æ–°
 				//num = control.target_count();
 
 				control.heatmap(control.area_count(), &heatmap_img, &imp.makeColorbar());
-				// “àŠO”»’è
+				// å†…å¤–åˆ¤å®š
 				control.is_out();
 				for (int i = 1; i < 5; i++){
 					P0[i] = P0[i - 1];
@@ -263,7 +263,7 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 				action = 0;
 			}
 			P0[0] = P1;
-			//} //ƒƒ{ƒbƒg‚Ì“®ìæ“¾
+			//} //ãƒ­ãƒœãƒƒãƒˆã®å‹•ä½œå–å¾—
 
 			if (command == 'a'){
 				xbee.sentAigamoCommand(action, arduino);
@@ -276,27 +276,27 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 			cv::warpPerspective(test2, test, imp.getInvPerse(), cv::Size(test.cols, test.rows), CV_INTER_LINEAR);
 
 
-			//-------------------dS“_‚Ìƒvƒƒbƒg----------------------------------------- 
-			if (!point.y == 0) { //@comment point.y == 0‚Ìê‡‚Íexception‚ª‹N‚±‚é( 0œZ )
+			//-------------------é‡å¿ƒç‚¹ã®ãƒ—ãƒ­ãƒƒãƒˆ----------------------------------------- 
+			if (!point.y == 0) { //@comment point.y == 0ã®å ´åˆã¯exceptionãŒèµ·ã“ã‚‹( 0é™¤ç®— )
 				
 				circle(copyImg, imp.calcHomoPoint(cv::Point2f(point)), 8, cv::Scalar(0, 0, 255), -1, CV_AA);
 				circle(dst, cv::Point(point.x, point.y), 8, cv::Scalar(0, 0, 255), -1, CV_AA);
 			}
 
-			//------------------ƒ^[ƒQƒbƒg‚Ìƒvƒƒbƒg--------------------------------------
+			//------------------ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ãƒ—ãƒ­ãƒƒãƒˆ--------------------------------------
 
 			control.plot_target(dst, P0[4]);
 			control.plot_transform_target(copyImg, P0[4], imp.getInvPerse());
 
-			//------------------ƒ}ƒX, ’¼i—Ìˆæ‚Ìƒvƒƒbƒg--------------------------------------
+			//------------------ãƒã‚¹, ç›´é€²é ˜åŸŸã®ãƒ—ãƒ­ãƒƒãƒˆ--------------------------------------
 
 			s2.showSOM3(dst,control.get_nowTargetArea());
 			s2.showSOM2(copyImg, imp.getInvPerse(),control.get_nowTargetArea());
 
-			//---------------------•\¦•”•ª----------------------------------------------
+			//---------------------è¡¨ç¤ºéƒ¨åˆ†----------------------------------------------
 
 
-			cv::imshow("camera_image", copyImg);//@comment o—Í‰æ‘œ
+			cv::imshow("camera_image", copyImg);//@comment å‡ºåŠ›ç”»åƒ
 			cv::imshow("Transform_Img", dst);
 			cv::moveWindow("camera_image", 800,0);
 			cv::moveWindow("Transform_Img",800,520);
@@ -306,16 +306,16 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 		}
 		frameNum++;
 	} 
-	ofs.close(); //@comment ƒtƒ@ƒCƒ‹ƒXƒgƒŠ[ƒ€‚Ì‰ğ•ú
+	ofs.close(); //@comment ãƒ•ã‚¡ã‚¤ãƒ«ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®è§£æ”¾
 }
 
-//ƒƒ{ƒbƒg©“®§Œä
+//ãƒ­ãƒœãƒƒãƒˆè‡ªå‹•åˆ¶å¾¡
 void AutoMove(){
-	HANDLE hdl;							//COMƒ|[ƒg’ÊMƒnƒ“ƒhƒ‹
-	Img_Proc imp = Img_Proc(CAM_ID);    //‰æ‘œˆ——pƒNƒ‰ƒX
-	Xbee_com xbee = Xbee_com(com, hdl); 	//xbee’ÊM‚Ì‰Šú‰»
-	setUp(com, hdl, imp);				//‰ŠúƒZƒbƒgƒAƒbƒv
-	Moving(hdl, xbee, imp);				//©“®§Œäƒ‹[ƒv
+	HANDLE hdl;							//COMãƒãƒ¼ãƒˆé€šä¿¡ãƒãƒ³ãƒ‰ãƒ«
+	Img_Proc imp = Img_Proc(CAM_ID);    //ç”»åƒå‡¦ç†ç”¨ã‚¯ãƒ©ã‚¹
+	Xbee_com xbee = Xbee_com(com, hdl); 	//xbeeé€šä¿¡ã®åˆæœŸåŒ–
+	setUp(com, hdl, imp);				//åˆæœŸã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
+	Moving(hdl, xbee, imp);				//è‡ªå‹•åˆ¶å¾¡ãƒ«ãƒ¼ãƒ—
 }
 
 int main(int argc, char *argv[]){
