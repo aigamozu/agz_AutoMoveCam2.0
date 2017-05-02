@@ -8,7 +8,7 @@
 //using namespace System;
 
 #define GRAVITY 1      //画像中の領域 : 0  注目領域 : 1
-#define CAM_ID 1	   //カメラID
+#define CAM_ID 0	   //カメラID
 const LPCSTR com = "COM3";		//COMポート名
 std::vector<cv::Point2f> Pos;	//水田の四隅の点
 std::vector<cv::Point2f> Pos2;
@@ -296,11 +296,14 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 			//---------------------表示部分----------------------------------------------
 
 
+			cv::resize(copyImg,copyImg,cv::Size(400,400));
+			cv::resize(dst,dst,cv::Size(400,400));
 			cv::imshow("camera_image", copyImg);//@comment 出力画像
 			cv::imshow("Transform_Img", dst);
-			cv::moveWindow("camera_image", 800,0);
-			cv::moveWindow("Transform_Img",800,520);
-
+			if (frameNum == 0){
+				cv::moveWindow("camera_image", 400,0);
+				cv::moveWindow("Transform_Img",800,0);
+			}
 			cv::waitKey(1);
 
 		}

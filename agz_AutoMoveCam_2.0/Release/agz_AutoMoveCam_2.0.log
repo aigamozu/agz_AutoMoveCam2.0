@@ -1,11 +1,11 @@
-﻿2017/04/18 3:02:24 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\agz_AutoMoveCam_2.0\agz_AutoMoveCam_2.0.vcxproj" (Build ターゲット)。
+﻿2017/05/02 21:53:02 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\agz_AutoMoveCam_2.0\agz_AutoMoveCam_2.0.vcxproj" (Build ターゲット)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /wd4996 /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\Library\opencv3\build\include\opencv2/core/mat.hpp(1965): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
-     1>C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\Library\opencv3\build\include\opencv2/core/persistence.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
-     1>C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\Library\opencv3\build\include\opencv2/core/utility.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\Library\opencv3\build\include\opencv2/core/mat.hpp(1918): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\Library\opencv3\build\include\opencv2/core/persistence.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\Library\opencv3\build\include\opencv2/core/utility.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
      1>main.cpp(58): warning C4244: '引数' : 'int' から 'float' への変換です。データが失われる可能性があります。
      1>main.cpp(137): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
      1>main.cpp(162): warning C4244: '引数' : 'float' から 'int' への変換です。データが失われる可能性があります。
@@ -13,15 +13,15 @@
      1>main.cpp(232): warning C4244: '=' : 'float' から 'int' への変換です。データが失われる可能性があります。
      1>main.cpp(239): warning C4244: '引数' : 'int' から 'float' への変換です。データが失われる可能性があります。
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.exe" /NOLOGO opencv_ts300.lib opencv_world300.lib SSK.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.lib" /MACHINE:X86 /SAFESEH Release\Contorl.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.exe" /NOLOGO opencv_ts300.lib opencv_world300.lib SSK.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.lib" /MACHINE:X86 /SAFESEH Release\Contorl.obj
          Release\Img_Proc.obj
          Release\main.obj
          Release\SOM.obj
          Release\Xbee_com.obj
          コード生成しています。
          コード生成が終了しました。
-         agz_AutoMoveCam_2.0.vcxproj -> C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.exe
-     1>プロジェクト "C:\Users\fumi0\gitRepo\agz_AutoMoveCam2.0\agz_AutoMoveCam_2.0\agz_AutoMoveCam_2.0.vcxproj" (Build ターゲット) のビルドが完了しました。
+         agz_AutoMoveCam_2.0.vcxproj -> C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\Release\agz_AutoMoveCam_2.0.exe
+     1>プロジェクト "C:\Users\fumi0\Source\Repos\agz_AutoMoveCam2.0\agz_AutoMoveCam_2.0\agz_AutoMoveCam_2.0.vcxproj" (Build ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 

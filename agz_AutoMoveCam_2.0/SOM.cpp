@@ -182,7 +182,7 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 
 	std::vector<Neuron> defo = som;
 	float t = 1;
-	static float max_t = 36000;
+	static float max_t = 3600;
 	int index = 0;
 	int count = 0;
 	float dist = 0;
