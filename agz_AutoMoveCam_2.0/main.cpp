@@ -6,9 +6,14 @@
 #include <time.h>
 
 //using namespace System;
+//最終更新 2017/05/04
 
-#define GRAVITY 1      //画像中の領域 : 0  注目領域 : 1
-#define CAM_ID 0	   //カメラID
+
+#define GRAVITY 1             //画像中の領域 : 0  注目領域 : 1
+#define CAM_ID 0	          //カメラID
+#define Rice_Field_Width  900  //水田横幅(cm単位)
+#define Rice_Field_Height 900  //水田縦幅(cm単位)
+
 const LPCSTR com = "COM3";		//COMポート名
 std::vector<cv::Point2f> Pos;	//水田の四隅の点
 std::vector<cv::Point2f> Pos2;
@@ -123,11 +128,6 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 
 	imp.Perspective(src_frame, dst_img, Pos);
 
-	//Pos2.push_back(cv::Point(30, dst_img.rows - 30));
-	//Pos2.push_back(cv::Point(30, 30));
-	//Pos2.push_back(cv::Point(dst_img.cols - 30, 30));
-	//Pos2.push_back(cv::Point(dst_img.cols - 30, dst_img.rows - 30));
-
 	Pos2.push_back(cv::Point(5, dst_img.rows - 5));
 	Pos2.push_back(cv::Point(5, 5));
 	Pos2.push_back(cv::Point(dst_img.cols - 5, 5));
@@ -169,6 +169,7 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 
 	//ロボット座標csv
 	ofs << imp.getField().x << ", " << imp.getField().y << std::endl;
+	//ofs << Rice_Field_Width << ", " << Rice_Field_Height << std::endl;
 	ofs << "x軸, y軸（補正なし）, ypos（補正あり）" << std::endl;
 
 
@@ -228,10 +229,11 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 			}
 
 			if (point.x != 0) {
-				ypos = sz.y - (point.y + 6 * ((1000 / point.y) + 1));
-				ydef = sz.y - point.y;//@comment 補正なしｙ重心
+				ypos = 480 - (point.y + 6 * ((1000 / point.y) + 1));
+				ydef = 480 - point.y;//@comment 補正なしｙ重心
 				//std::cout << point.x << " " << ypos << std::endl; //@comment 変換画像中でのロボットの座標(重心)
-				ofs << point.x << ", " << ydef << ", " << ypos << std::endl; //@comment 変換
+				std::cout << "x : " << float(point.x * 900 / 640) << " y : " << point.y << " ydef : " << float(ydef * 900 / 480) << std::endl;
+				ofs << float(point.x * 900 / 640) << ", " << float(ydef * 900 / 480) << ", " << point.y << std::endl; //@comment 変換
 			}
 
 			//---------------------ロボットの動作取得------------------------------------
@@ -296,8 +298,8 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 			//---------------------表示部分----------------------------------------------
 
 
-			cv::resize(copyImg,copyImg,cv::Size(400,400));
-			cv::resize(dst,dst,cv::Size(400,400));
+			//cv::resize(copyImg,copyImg,cv::Size(400,400));
+			//cv::resize(dst,dst,cv::Size(400,400));
 			cv::imshow("camera_image", copyImg);//@comment 出力画像
 			cv::imshow("Transform_Img", dst);
 			if (frameNum == 0){
