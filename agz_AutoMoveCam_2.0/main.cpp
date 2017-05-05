@@ -10,9 +10,11 @@
 
 
 #define GRAVITY 1             //画像中の領域 : 0  注目領域 : 1
-#define CAM_ID 0	          //カメラID
-#define Rice_Field_Width  900  //水田横幅(cm単位)
-#define Rice_Field_Height 900  //水田縦幅(cm単位)
+#define CAM_ID 1	          //カメラID
+#define Rice_Field_Width  10  //水田横幅(cm単位)
+#define Rice_Field_Height 10  //水田縦幅(cm単位)
+#define SOM_XDivide 10		  //SOM分割数 x方向
+#define SOM_YDivide 10		  //SOM分割数 y方向
 
 const LPCSTR com = "COM3";		//COMポート名
 std::vector<cv::Point2f> Pos;	//水田の四隅の点
@@ -89,9 +91,9 @@ void getCoordinates(int event, int x, int y, int flags, void* param)
 
 
 //画像を取得し,水田領域を設定
-void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
+void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp, int w, int h){
 
-	int width=9, height=9;
+	int width=w, height=h;
 	cv::Mat field;
 	cv::UMat src_frame, dst_img;
 
@@ -137,8 +139,8 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp){
 	for (int i = 0; i < Pos2.size(); i++){
 		pt2[i] = Pos2[i];
 	}
-
-	s2.set_size(width, height);
+	//s2.set_size(width,height);
+	s2.set_size(SOM_XDivide * 100, SOM_XDivide * 100);
 	s2.set_pos(Pos2);
 	s2.set_img(dst_img);
 	cv::Mat_<cv::Vec3b> ss2(dst_img.size());
@@ -228,17 +230,21 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 				std::cout << "posion: " << point.x << " " << point.y << std::endl;//@comment 重心点の表示
 			}
 
+
+			//ypos : 補正あり,  ydef : 補正なし (y座標) : matlabでの処理の際に使用
 			if (point.x != 0) {
 				ypos = 480 - (point.y + 6 * ((1000 / point.y) + 1));
-				ydef = 480 - point.y;//@comment 補正なしｙ重心
+				ydef = 480 - point.y;//@comment 補正なしｙ重心 
 				//std::cout << point.x << " " << ypos << std::endl; //@comment 変換画像中でのロボットの座標(重心)
-				std::cout << "x : " << float(point.x * 900 / 640) << " y : " << point.y << " ydef : " << float(ydef * 900 / 480) << std::endl;
-				ofs << float(point.x * 900 / 640) << ", " << float(ydef * 900 / 480) << ", " << point.y << std::endl; //@comment 変換
+				ydef = float(ydef * 900 / 480);
+				//std::cout << "x : " << float(point.x * 900 / 640) << " ydef : " << ydef << std::endl;
+				ofs << float(point.x * 900 / 640) << ", " << ydef << ", " << point.y << std::endl; //@comment 変換
 			}
 
 			//---------------------ロボットの動作取得------------------------------------
 			//if (frame % 2 == 0){
-			P1 = cv::Point2f(point.x, sz.y - ydef);
+			//P1 : 
+			P1 = cv::Point2f(point.x,point.y);
 			if (P1.x != 0 && P1.y != 0) {
 				// ターゲットの更新
 				if (control.is_updateTarget()){
@@ -252,8 +258,11 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 
 				// ターゲットの訪問回数更新
 				//num = control.target_count();
-
-				control.heatmap(control.area_count(), &heatmap_img, &imp.makeColorbar());
+				cv::Point2f hPoint = control.area_count();
+				std::cout << "hPoint : " << hPoint.x <<" : " <<hPoint.y << std::endl;
+				control.heatmap(cv::Point(hPoint.x , hPoint.y )
+				, &heatmap_img, &imp.makeColorbar());
+				//control.heatmap(control.area_count(), &heatmap_img, &imp.makeColorbar());
 				// 内外判定
 				control.is_out();
 				for (int i = 1; i < 5; i++){
@@ -298,8 +307,8 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 			//---------------------表示部分----------------------------------------------
 
 
-			//cv::resize(copyImg,copyImg,cv::Size(400,400));
-			//cv::resize(dst,dst,cv::Size(400,400));
+			cv::resize(copyImg,copyImg,cv::Size(400,400));
+			cv::resize(dst,dst,cv::Size(400,400));
 			cv::imshow("camera_image", copyImg);//@comment 出力画像
 			cv::imshow("Transform_Img", dst);
 			if (frameNum == 0){
@@ -319,7 +328,7 @@ void AutoMove(){
 	HANDLE hdl;							//COMポート通信ハンドル
 	Img_Proc imp = Img_Proc(CAM_ID);    //画像処理用クラス
 	Xbee_com xbee = Xbee_com(com, hdl); 	//xbee通信の初期化
-	setUp(com, hdl, imp);				//初期セットアップ
+	setUp(com, hdl, imp,Rice_Field_Width,Rice_Field_Height); //初期セットアップ
 	Moving(hdl, xbee, imp);				//自動制御ループ
 }
 

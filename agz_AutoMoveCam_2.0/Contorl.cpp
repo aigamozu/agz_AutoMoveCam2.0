@@ -46,7 +46,7 @@ bool Control::is_updateTarget(void){
 		double d = sqrt(dx * dx + dy * dy);
 
 		// ターゲットの半径５０cm以内の領域に入ったら訪問完了->ターゲットを移す
-		if (d < 50.0) {
+		if (d < 30.0) {
 			result = true;
 			nowTarget_itr++;
 		}
@@ -135,16 +135,18 @@ int Control::robot_action(cv::Point2i Previous){
 ////////////////////////////////////////////////////////////////////////////////
 cv::Point2i Control::area_count(void){
 
+
+	std::cout << "nowPoint : " << nowPoint << std::endl;
 	cv::Point2i p;
 	// 位置情報 nowPointから配列の添え字番号を求める
 	for (int i = 0; i < width / 100 * 5; i++){
-		if (i * 20 <= nowPoint.x && nowPoint.x < (i + 1) * 20){
+		if (i * 20 <= float(nowPoint.x* width / 640) && float(nowPoint.x * width / 640) < (i + 1) * 20){
 			p.x = i;
 			break;
 		}
 	}
 	for (int j = 0; j < height / 100 * 5; j++){
-		if (j * 20 <= nowPoint.y && nowPoint.y < (j + 1) * 20){
+		if (j * 20 <= float(nowPoint.y * height / 480) && float(nowPoint.y * height / 480) < (j + 1) * 20){
 			p.y = j;
 			break;
 		}
