@@ -10,6 +10,8 @@ Img_Proc::Img_Proc(int camId){
 	cap.set(CV_CAP_PROP_FRAME_WIDTH, 640); //@comment webカメラの横幅を設定
 	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480); //@comment webカメラの縦幅を設定
 
+
+
 	//@comment 呼び出しミスがあれば終了
 	if (!this->cap.isOpened()){
 		system("PAUSE");
@@ -191,6 +193,7 @@ void Img_Proc::colorExtraction(cv::UMat &src, cv::UMat &dst,
 cv::UMat Img_Proc::getFrame(){
 	cv::Mat src;
 	cap >> src; //@comment 1フレーム取得
+	cap.retrieve(src, CV_CAP_OPENNI_BGR_IMAGE);
 	src.copyTo(capImg);
 	return capImg;
 }

@@ -5,6 +5,11 @@
 #include <fstream>
 #include <time.h>
 
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
+#include <opencv2/videoio/videoio.hpp>
+
 //using namespace System;
 //最終更新 2017/05/04
 
@@ -35,6 +40,20 @@ std::string setFilename(std::string str){
 	char time[32];
 	std::string c = ".csv";
 	std::string data = "./data/";
+
+	//@comment sprintfを使ってint型をstringに変換
+	sprintf(time, "%d_%d_%d_%d_%d", pnow->tm_year + 1900, pnow->tm_mon + 1,
+		pnow->tm_mday, pnow->tm_hour, pnow->tm_min);
+
+	return data + str + time + c; //@comment 生成されたファイル名
+}
+
+std::string setFilename2(std::string str){
+	time_t now = time(NULL);
+	struct tm * pnow = localtime(&now);
+	char time[32];
+	std::string c = ".avi";
+	std::string data = "./videos/";
 
 	//@comment sprintfを使ってint型をstringに変換
 	sprintf(time, "%d_%d_%d_%d_%d", pnow->tm_year + 1900, pnow->tm_mon + 1,
@@ -156,6 +175,26 @@ void setUp(LPCSTR com, HANDLE &hdl, Img_Proc &imp, int w, int h){
 
 //制御ループ
 void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
+
+//////////////////////////////////////
+	cv::VideoWriter video,video2,video3;
+	//video.open("Result.avi", CV_FOURCC('X', 'V', 'I', 'D'), 15, cv::Size(640, 480), true);
+	video.open(setFilename2("Transform"), CV_FOURCC('M', 'J', 'P', 'G'),4,cv::Size(640,480),true);
+	if (video.isOpened()){
+		std::cout << "open" << std::endl;
+	}
+
+	video2.open(setFilename2("Camera"), CV_FOURCC('M', 'J', 'P', 'G'), 4, cv::Size(640, 480), true);
+	if (video2.isOpened()){
+		std::cout << "open" << std::endl;
+	}
+
+	video3.open(setFilename2("Heatmap"), CV_FOURCC('M', 'J', 'P', 'G'), 4, cv::Size(640, 480), true);
+	if (video3.isOpened()){
+		std::cout << "open" << std::endl;
+	}
+//////////////////////////////////////
+	cv::Mat heat;
 	cv::Mat element = cv::Mat::ones(3, 3, CV_8UC1); //2値画像膨張用行列
 	cv::Mat heatmap_img(cv::Size(500, 500), CV_8UC3, cv::Scalar(255, 255, 255));
 	int frameNum = 0;								//フレーム数保持変数
@@ -193,7 +232,6 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 				if (command == 'q') {
 					//xbee.sentManualCommand(byte(0x01), arduino);
 					std::cout << " プログラムを終了します " << std::endl << std::endl;
-
 					cv::destroyAllWindows();
 					ofs.close(); //@comment ファイルストリームの解放
 					
@@ -260,7 +298,7 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 				//num = control.target_count();
 				cv::Point2f hPoint = control.area_count();
 				std::cout << "hPoint : " << hPoint.x <<" : " <<hPoint.y << std::endl;
-				control.heatmap(cv::Point(hPoint.x , hPoint.y )
+				heat = control.heatmap(cv::Point(hPoint.x , hPoint.y )
 				, &heatmap_img, &imp.makeColorbar());
 				//control.heatmap(control.area_count(), &heatmap_img, &imp.makeColorbar());
 				// 内外判定
@@ -307,10 +345,35 @@ void Moving(HANDLE &arduino, Xbee_com &xbee, Img_Proc &imp){
 			//---------------------表示部分----------------------------------------------
 
 
+			///////////////////////////////////
+			cv::Mat vi,vi2,vi3;
+			dst.copyTo(vi);
+			copyImg.copyTo(vi2);
+			heat.copyTo(vi3);
+
+			video.write(vi);
+			if (!video.isOpened()){
+				std::cout << "not Open 1" << std::endl;
+			}
+			video2.write(vi2);
+			if (!video2.isOpened()){
+				std::cout << "not Open 2" << std::endl;
+			}
+			cv::resize(vi3,vi3,cv::Size(640,480));
+			video3.write(vi3);
+			if (!video3.isOpened()){
+				std::cout << "not Open 2" << std::endl;
+			}
+			//////////////////////////////////////////
+
+
+
+
 			cv::resize(copyImg,copyImg,cv::Size(400,400));
 			cv::resize(dst,dst,cv::Size(400,400));
 			cv::imshow("camera_image", copyImg);//@comment 出力画像
 			cv::imshow("Transform_Img", dst);
+			cv::imshow("heatmap",heat);
 			if (frameNum == 0){
 				cv::moveWindow("camera_image", 400,0);
 				cv::moveWindow("Transform_Img",800,0);

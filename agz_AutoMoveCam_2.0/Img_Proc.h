@@ -80,4 +80,6 @@ public:
 
 	std::vector<cv::Point2f> getPerseArea(std::vector<cv::Point2f> &Pos);
 	//void perseSOM(cv::UMat &img, SOM &som);
+
+	cv::VideoCapture get_cap(void);
 };

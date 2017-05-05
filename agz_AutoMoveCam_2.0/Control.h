@@ -67,7 +67,7 @@ public:
 	void plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat H);
 
 	// ヒートマップ作成
-	void heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar);
+	cv::Mat heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar);
 
 	//	set function
 	void set_target(SOM som);

@@ -293,7 +293,7 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 //  return : void
 ////////////////////////////////////////////////////////////////////////////////
 
-void Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
+cv::Mat Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 
 
 	//	１マスのピクセル数 10x10
@@ -377,7 +377,8 @@ void Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 	for (int i = 0; i < 5; i++){
 		cv::putText(concat_img, std::to_string(i*value), cv::Point(0 + 100 * i, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1.0, CV_AA);
 	}
-	cv::imshow("heatmap", concat_img);
+	//cv::imshow("heatmap", concat_img);
+	return concat_img;
 }
 
 
