@@ -8,7 +8,7 @@
 
 class SOM{
 private:
-	int width,height;
+	int width, height;
 	cv::UMat image;
 	std::vector<cv::Point2f> P;
 
@@ -25,7 +25,7 @@ private:
 
 public:
 	SOM();
-	SOM(int width, int height, std::vector<cv::Point2f> &Pos , cv::UMat &src);
+	SOM(int width, int height, std::vector<cv::Point2f> &Pos, cv::UMat &src);
 	/**
 	* @fn
 	* SOM(自己組織化マップ)の生成を行う関数
@@ -76,7 +76,7 @@ public:
 	*/
 	void calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat &origin);
 
-	void calcsom2(int w,int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat &origin); 
+	void calcsom2(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat &origin);
 
 	/**
 	* @fn
@@ -88,7 +88,7 @@ public:
 	* @sa     -
 	* @detail -
 	*/
-	void showSOM(int index,std::vector<int> &linked, std::vector<Neuron> &def, int time);
+	void showSOM(int index, std::vector<int> &linked, std::vector<Neuron> &def, int time);
 
 	void Imgproc(cv::Mat &src, cv::Mat &dst);
 

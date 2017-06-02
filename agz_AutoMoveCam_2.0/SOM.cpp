@@ -1,74 +1,37 @@
-#include"Som.h"
+ï»¿#include"Som.h"
 
-#define CAM 1 // 0->uvc, 1->pixpro
+#define CAM 0 // 0->uvc, 1->pixpro
 
 cv::Mat Img(cv::Size(500, 500), CV_8UC3);
 
-
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 SOM::SOM(){}
 SOM::SOM(int width, int height, std::vector<cv::Point2f> &Pos, cv::UMat &src){
-	set_size(width, height);
-	set_pos(Pos);
-	set_img(src);
+	set_size(width, height); //åŒºç”»ã®åˆæœŸåŒ–
+	set_pos(Pos);			 //4ç‚¹ã®åº§æ¨™ã®åˆæœŸåŒ–
+	set_img(src);			 //å…¥åŠ›ç”»åƒã®åˆæœŸåŒ–
 }
 
-//“§‹“Š‰e•ÏŠ·‘O‚Ì‰æ‘œ‚É‘Î‚µ‚Ä
-void SOM::Init(cv::Mat &src){
-	cv::Mat dst;
-	int calcNeuronNum; //‹ß–Tƒjƒ…[ƒƒ“‚Ì”Ô†‚ğæ“¾
-	std::vector<Neuron> storeNeuron; //ƒjƒ…[ƒƒ“‚ÌŠi”[
-	for (int j = 0; j < height + 1; j++){
-		for (int i = 0; i < width + 1; i++){
-			Neuron neu; //ƒjƒ…[ƒƒ“\‘¢‘Ì
-			neu.id = j * (width + 1) + i;
-			neu.p = cv::Point2i((i % (width + 1)) * 10 + 250, 250 - (j % (height + 1) * 10)); //ƒjƒ…[ƒƒ“‚Ì‰ŠúˆÊ’u
-			for (int k = j - 1; k < j + 2; k++){
-				for (int l = i - 1; l < i + 2; l++){
-					calcNeuronNum = k * (width + 1) + l;
+//å°„å½±å¤‰æ›å‰ã®
+void SOM::Init(cv::Mat &src){}
 
-					//4‹ß–T‚Ì’²¸
-					if (k >= 0 && j - 1 == k && i == l){
-						neu.link.push_back(calcNeuronNum);
-					}
-					if (l <= height && j == k && i + 1 == l){
-						neu.link.push_back(calcNeuronNum);
-					}
-					if (k <= height && j + 1 == k && i == l){
-						neu.link.push_back(calcNeuronNum);
-					}
-					if (l >= 0 && j == k && i - 1 == l){
-						neu.link.push_back(calcNeuronNum);
-					}
-				}
-			}
-			storeNeuron.push_back(neu);
-		}
-	}
-
-	Imgproc(src, dst);
-	calcsom(width, height, storeNeuron, dst, src); //som‚ÌŒvZ
-	this->som = storeNeuron;
-	std::cout << "fin" << std::endl;
-	cv::waitKey(1000); //ƒvƒƒOƒ‰ƒ€‚ÌI—¹
-}
-
-//“§‹“Š‰e•ÏŠ·‘O‚Ì‰æ‘œ‚É‘Î‚µ‚Ä
+//å°„å½±å¤‰æ›å‰ã®ç”»åƒã«SOMã‚’é©ç”¨ã™ã‚‹
 void SOM::Init2(cv::Mat &src){
-	std::cout<<std::endl << "--------------------------------------------------------------"<< std::endl;
-	std::cout<< std::endl << " ‘|ˆøƒ}ƒbƒv¶¬ŠJn" << std::endl << std::endl;
+	std::cout << std::endl << "--------------------------------------------------------------" << std::endl;
+	std::cout << std::endl << " æƒå¼•ãƒãƒƒãƒ—ç”Ÿæˆé–‹å§‹" << std::endl << std::endl;
 	cv::Mat dst;
-	int calcNeuronNum; //‹ß–Tƒjƒ…[ƒƒ“‚Ì”Ô†‚ğæ“¾
-	std::vector<Neuron> storeNeuron; //ƒjƒ…[ƒƒ“‚ÌŠi”[
+	int calcNeuronNum; //è¿‘å‚ãƒ‹ãƒ¥ãƒ¼ãƒ­ãƒ³ã®ç•ªå·ã‚’å–å¾—
+	std::vector<Neuron> storeNeuron; //ãƒ‹ãƒ¥ãƒ¼ãƒ­ãƒ³ã®æ ¼ç´
 	for (int j = 0; j < height + 1; j++){
 		for (int i = 0; i < width + 1; i++){
-			Neuron neu; //ƒjƒ…[ƒƒ“\‘¢‘Ì
+			Neuron neu; //ãƒ‹ãƒ¥ãƒ¼ãƒ­ãƒ³æ§‹é€ ä½“
 			neu.id = j * (width + 1) + i;
-			neu.p = cv::Point2i((i % (width + 1)) * 20 + 200, 300 - (j % (height + 1) * 20)); //ƒjƒ…[ƒƒ“‚Ì‰ŠúˆÊ’u
+			neu.p = cv::Point2i((i % (width + 1)) * 20 + 200, 300 - (j % (height + 1) * 20)); //Æ’jÆ’â€¦Â[Æ’ÂÆ’â€œâ€šÃŒÂâ€°Å ÃºË†ÃŠâ€™u
 			for (int k = j - 1; k < j + 2; k++){
 				for (int l = i - 1; l < i + 2; l++){
 					calcNeuronNum = k * (width + 1) + l;
 
-					//4‹ß–T‚Ì’²¸
+					//4è¿‘å‚ã®èª¿æŸ»
 					if (k >= 0 && j - 1 == k && i == l){
 						neu.link.push_back(calcNeuronNum);
 					}
@@ -88,15 +51,14 @@ void SOM::Init2(cv::Mat &src){
 	}
 
 	Imgproc(src, dst);
-	calcsom(width, height, storeNeuron, dst, src); //som‚ÌŒvZ
+	calcsom(width, height, storeNeuron, dst, src); //somã®è¨ˆç®—
 	this->som = storeNeuron;
 	std::cout << std::endl << std::endl;
-	std::cout << " ‘|ˆøƒ}ƒbƒv¶¬I—¹" << std::endl << std::endl;
+	std::cout << " æƒå¼•ãƒãƒƒãƒ—ç”Ÿæˆçµ‚äº†" << std::endl << std::endl;
 
-	std::cout << "--------------------------------------------------------------" << std::endl<<std::endl;
+	std::cout << "--------------------------------------------------------------" << std::endl << std::endl;
 
 }
-
 
 
 void SOM::InitImg(cv::Mat &img){
@@ -168,21 +130,17 @@ void SOM::showSOM(int index, std::vector<int> &linked, std::vector<Neuron> &def,
 
 	cv::circle(im, def[index].p, 3, cv::Scalar(0, 255, 255), -1, CV_AA);
 
-
-	//@comment “§‹•ÏŠ·s—ñ‚ğŒvZ
 	cv::Mat perspective_matrix = getPerspectiveTransform(pts1, pts2);
 	cv::warpPerspective(im, im, perspective_matrix, cv::Size(im.cols, im.rows), cv::INTER_LINEAR);
-	cv::resize(im, im, cv::Size(), 0.5, 0.5);
-	//cv::imshow("show", im);
-	//cv::imwrite(setImageName("Default_SOM", time),im);
-	//cv::waitKey(1);
+
+
 }
 
 void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat &origin){
 
 	std::vector<Neuron> defo = som;
 	float t = 1;
-	static float max_t = 3600;
+	static float max_t = 32000;
 	int index = 0;
 	int count = 0;
 	float dist = 0;
@@ -197,7 +155,7 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 
 	std::vector<cv::Point2f> random = storePoint(src);
 	std::vector<cv::Point2f> random2 = storeBorderPoint();
-	cv::Point pt[10]; //”CˆÓ‚Ì4“_‚ğ”z—ñ‚É“ü‚ê‚é
+	cv::Point pt[10]; //ä»»æ„ã®4ç‚¹ã‚’é…åˆ—ã«æ ¼ç´
 	for (int i = 0; i < P.size(); i++){
 		pt[i] = P[i];
 	}
@@ -214,75 +172,49 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 		index = 0;
 		count = 0;
 		learncoeff = 1 - float(t / (max_t));
-		/*
-		// “à‘¤
-		if (0.0 * max_t < t && t < 0.45 * max_t || 0.57 * max_t < t && t < 0.60 * max_t || 0.86 * max_t < t && t < 0.90 * max_t){
-		ind = rand() * rand() % random.size(); //rand‚ğ‚QŒÂ‚©‚¯‚Ä”ÍˆÍ‚ğL‚°‚é
-		randP = random[ind];
-		}
-		// l‹÷
-		else if (t > 0.95*max_t){
-		randP = this->P[rand() % this->P.size()];
-		}
-		// ŠO—Ìˆæ
-		else{
-		ind = rand() % random2.size(); //rand‚ğ‚QŒÂ‚©‚¯‚Ä”ÍˆÍ‚ğL‚°‚é
-
-		randP = random2[ind];
-		}
-		*/
-
-		/*
-		int test = 0;
-		if (0.4 * max_t <= t && t <= 0.80 * max_t){
-			test = 0 + (int)(rand() * (10 - 0 + 1.0) / (1.0 + RAND_MAX));
-			printf("%lf\n", test);
-		}
-		else{
-			test = 10;
-		}*/
+		
 
 		if (CAM == 0){
-			// “à‘¤
-			if ((0.0 * max_t < t && t < 0.4 * max_t) || (int)t%10 < 5){
-				ind = rand() * rand() % random.size(); //rand‚ğ‚QŒÂ‚©‚¯‚Ä”ÍˆÍ‚ğL‚°‚é
+			// å†…å´
+			if ((0.0 * max_t < t && t < 0.4 * max_t) || (int)t % 10 < 5){
+				ind = rand() * rand() % random.size(); //randã®ç¯„å›²æ‹¡å¤§
 				randP = random[ind];
 			}
-			// l‹÷
-			else if (t > 0.95*max_t || (int)t%10 < 6){
+			// 4éš…
+			else if (t > 0.95*max_t || (int)t % 10 < 6){
 				randP = this->P[rand() % this->P.size()];
 			}
-			// ŠO—Ìˆæ
+			// å¤–é ˜åŸŸ
 			else{
-				ind = rand() % random2.size(); //rand‚ğ‚QŒÂ‚©‚¯‚Ä”ÍˆÍ‚ğL‚°‚é
+				ind = rand() % random2.size(); //randâ€šÃ°â€šQÅ’Ã‚â€šÂ©â€šÂ¯â€šÃ„â€ÃË†Ãâ€šÃ°ÂLâ€šÂ°â€šÃ©
 
 				randP = random2[ind];
 			}
 		}
 		if (CAM == 1){
-			// “à‘¤
+			// å†…å´
 			//if ((0.0 * max_t < t && t < 0.3 * max_t) || (int)t%10 < 6){
 			if ((int)t % 10 < 6 || (0.5* max_t < t && t < 0.6 * max_t)){
-				ind = rand() * rand() % random.size(); //rand‚ğ‚QŒÂ‚©‚¯‚Ä”ÍˆÍ‚ğL‚°‚é
+				ind = rand() * rand() % random.size(); //randâ€šÃ°â€šQÅ’Ã‚â€šÂ©â€šÂ¯â€šÃ„â€ÃË†Ãâ€šÃ°ÂLâ€šÂ°â€šÃ©
 				randP = random[ind];
 				//printf("1!\n");
 			}
-			// l‹÷
+			// 4éš…
 			//else if (0.95*max_t < t || (int)t%10 < 7){
-			else if((int)t%10 < 7){
+			else if ((int)t % 10 < 7){
 				randP = this->P[rand() % this->P.size()];
 				//printf("22!\n");
 			}
-			// ŠO—Ìˆæ
+			// å¤–é ˜åŸŸ
 			else{
-				ind = rand() % random2.size(); //rand‚ğ‚QŒÂ‚©‚¯‚Ä”ÍˆÍ‚ğL‚°‚é
+				ind = rand() % random2.size(); //randâ€šÃ°â€šQÅ’Ã‚â€šÂ©â€šÂ¯â€šÃ„â€ÃË†Ãâ€šÃ°ÂLâ€šÂ°â€šÃ©
 				randP = random2[ind];
 				//printf("333!\n");
 			}
 		}
 
 
-		cv::circle(cpimg, randP, 4, cv::Scalar(255, 255, 255), -1, CV_AA); //“ü—Í’l
+		cv::circle(cpimg, randP, 4, cv::Scalar(255, 255, 255), -1, CV_AA); //â€œÃ¼â€”Ãâ€™l
 		for (auto it : som){
 			neuDist = abs(sqrt((it.p.x - randP.x)*(it.p.x - randP.x) + (it.p.y - randP.y)*(it.p.y - randP.y)));
 			if (neuDist < dist){
@@ -293,7 +225,7 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 			}
 			count++;
 		}
-		distM = 0; //ƒ}ƒ“ƒnƒbƒ^ƒ“‹——£
+		distM = 0; //ãƒãƒ³ãƒãƒƒã‚¿ãƒ³è·é›¢
 
 		std::vector<int> ne;
 		std::vector<int> ne2;
@@ -383,11 +315,11 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 		if (int(t) % 1000 == 0){
 			int process;
 			std::cout << "*";
-			
+
 			process = t / max_t * 100;
-			
+
 			if (process == 25 || process == 50 || process == 75){
-				std::cout <<" "<<  process << "% ";
+				std::cout << " " << process << "% ";
 			}
 
 
@@ -404,175 +336,9 @@ void SOM::calcsom(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat 
 	cv::imshow("s", cpimg);
 }
 
-void SOM::calcsom2(int w, int h, std::vector<Neuron> &som, cv::Mat &src, cv::Mat &origin){
-	std::vector<Neuron> defo = som;
-	float t = 1;
-	/*static float max_t = 35000;*/
-	static float max_t = 5000;
-	int index = 0;
-	int count = 0;
-	float dist = 0;
-	float neuDist = 0;
-	int distM = 0;
-	static cv::Mat cpimg;
-	static cv::Point2f randP;
-	float learncoeff = 0;
-	cv::Point2f res;
-	int ind = 0;
-	srand(2);
-
-	std::vector<cv::Point2f> random2 = storeBorderPoint();
-
-	cv::Point pt[10]; //”CˆÓ‚Ì4“_‚ğ”z—ñ‚É“ü‚ê‚é
-	for (int i = 0; i < P.size(); i++){
-		pt[i] = P[i];
-	}
-
-	while (t < max_t){
-		image.copyTo(cpimg);
-		line(cpimg, pt[0], pt[1], cv::Scalar(255, 255, 0), 2, CV_AA);
-		line(cpimg, pt[1], pt[2], cv::Scalar(255, 255, 0), 2, CV_AA);
-		line(cpimg, pt[2], pt[3], cv::Scalar(255, 255, 0), 2, CV_AA);
-		line(cpimg, pt[3], pt[0], cv::Scalar(255, 255, 0), 2, CV_AA);
-
-		dist = 3000;
-		index = 0;
-		count = 0;
-		learncoeff = 1 - float(t / (max_t));
-
-
-		if (t > 0 * max_t && t <0.60 * max_t || t > 0.70*max_t && t < 0.80 *max_t){
-
-			randP = cv::Point2f(rand() % src.cols, rand() % src.rows);
-		}
-		else if (t > 0.96*max_t){
-			randP = this->P[rand() % this->P.size()];
-		}
-		else{
-			ind = rand() % random2.size(); //rand‚ğ‚QŒÂ‚©‚¯‚Ä”ÍˆÍ‚ğL‚°‚é
-
-			randP = random2[ind];
-			//std::cout << "ind : " << ind << "posi : " << randP << std::endl;
-		}
-
-		cv::circle(cpimg, randP, 4, cv::Scalar(255, 255, 255), -1, CV_AA); //“ü—Í’l
-		for (auto it : som){
-			neuDist = abs(sqrt((it.p.x - randP.x)*(it.p.x - randP.x) + (it.p.y - randP.y)*(it.p.y - randP.y)));
-			if (neuDist < dist){
-				dist = neuDist;
-				res.x = randP.x - it.p.x;
-				res.y = randP.y - it.p.y;
-				index = count;
-			}
-			count++;
-		}
-		distM = 0; //ƒ}ƒ“ƒnƒbƒ^ƒ“‹——£
-
-		std::vector<int> ne;
-		std::vector<int> ne2;
-		std::vector<int> linked;
-		int lik = 0;
-
-		som[index].p.x = som[index].p.x + res.x * learncoeff / 6 * exp(-(distM*distM) / (2 * (learncoeff*learncoeff)));
-		som[index].p.y = som[index].p.y + res.y * learncoeff / 6 * exp(-(distM*distM) / (2 * (learncoeff*learncoeff)));
-		linked.push_back(index);
-		ne = som[index].link;
-		distM++;
-		int flag = 0;
-		int distFlag = 0;
-		float r = 0, max_r = 0;
-		cv::Point2i area;
-		while (1){
-
-			for (auto it : ne){
-				res.x = randP.x - som[it].p.x;
-				res.y = randP.y - som[it].p.y;
-
-				som[it].p.x = som[it].p.x + res.x * learncoeff / 6 * exp(-(distM*distM) / (2 * (learncoeff*learncoeff)));
-				som[it].p.y = som[it].p.y + res.y * learncoeff / 6 * exp(-(distM*distM) / (2 * (learncoeff*learncoeff)));
-
-				if (learncoeff / 6 * exp(-(distM*distM) / (2 * (learncoeff*learncoeff))) < 0.001){
-					if (distFlag == 0){
-						distFlag = 1;
-					}
-				}
-				if (distFlag == 1){
-					for (auto it : ne){
-						r = abs(sqrt((som[it].p.x - som[index].p.x)*(som[it].p.x - som[index].p.x)
-							+ (som[it].p.y - som[index].p.y)*(som[it].p.y - som[index].p.y)));
-						if (r > max_r){
-							max_r = r;
-						}
-					}
-					break;
-				}
-
-				for (auto it : ne){
-					linked.push_back(it);
-				}
-				std::sort(linked.begin(), linked.end(), cmp);
-				linked.erase(std::unique(linked.begin(), linked.end()), linked.end());
-
-				for (auto iit : som[it].link){
-					flag = 0;
-					for (auto i : linked){
-						if (iit == i){
-							flag = 1;
-						}
-					}
-					if (flag == 0){
-						ne2.push_back(iit);
-					}
-				}
-			}
-			std::sort(ne2.begin(), ne2.end(), cmp);
-			ne2.erase(std::unique(ne2.begin(), ne2.end()), ne2.end());
-
-			for (auto it : ne2){
-				linked.push_back(it);
-			}
-			std::sort(linked.begin(), linked.end(), cmp);
-			linked.erase(std::unique(linked.begin(), linked.end()), linked.end());
-
-			if (ne2.empty()) {
-				break;
-			}
-			distM++;
-			ne.clear();
-			for (auto it : ne2){
-				ne.push_back(it);
-			}
-			ne2.clear();
-		}
-		edgeline(som, cpimg);
-		for (auto it : som){
-			cv::circle(cpimg, it.p, 3, cv::Scalar(0, 0, 255), -1, CV_AA);
-		}
-
-		for (auto it : linked){
-			cv::circle(cpimg, som[it].p, 3, cv::Scalar(255, 0, 0), -1, CV_AA);
-		}
-		cv::circle(cpimg, som[index].p, 5, cv::Scalar(0, 255, 255), -1, CV_AA);
-		if (int(t) % 1000 == 0){
-
-			showSOM(index, linked, defo, t);
-			//cv::imshow("s2", cpimg);
-			cv::imwrite(setImageName("Real_Imge_Perspective", t / 20), cpimg);
-			//cv::waitKey(1);
-		}
-		t++;
-		index = 0;
-		count = 0;
-		distFlag = 0;
-	}
-	//cv::imshow("s", cpimg);
-}
-
 void SOM::Imgproc(cv::Mat &src, cv::Mat &dst){
 	cv::cvtColor(src, src, CV_BGR2GRAY);
 	cv::threshold(src, dst, 0, 255, CV_THRESH_BINARY_INV | CV_THRESH_OTSU);
-	//cv::imshow("input_image",src);
-
 }
 
 std::vector<cv::Point2f> SOM::storePoint(cv::Mat &img){
@@ -621,10 +387,9 @@ std::string SOM::setImageName(std::string str, int time){
 	char fcount[32];
 	std::string data = "./image/";
 
-	//@comment sprintf‚ğg‚Á‚ÄintŒ^‚ğstring‚É•ÏŠ·
 	sprintf(fcount, "_%dFrame.png", time);
 
-	return data + str + fcount; //@comment ƒtƒ@ƒCƒ‹–¼
+	return data + str + fcount; 
 }
 
 cv::Point2f SOM::calc_centerPoint(int n, std::vector<int> &nei){
@@ -754,7 +519,6 @@ cv::Point2f SOM::calc_weight(cv::Point2f a, cv::Point2f b, cv::Point2f c, cv::Po
 	C = (c.y - b.y) / (c.x - b.x);
 	D = c.y - C * c.x;
 
-	//std::cout << "A : " << A << "B : " << B << "C : " << C << "D : " << D << std::endl;
 	return cv::Point2f((B - D) / (C - A), (B*C - A*D) / (C - A));
 }
 

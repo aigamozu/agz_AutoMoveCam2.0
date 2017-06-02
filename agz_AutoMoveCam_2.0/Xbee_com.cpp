@@ -67,7 +67,7 @@ void Xbee_com::sentManualCommand(byte command, HANDLE &arduino){
 }
 
 //動作パターン変更関数
-void Xbee_com::sentAigamoCommand(int command, HANDLE &arduino) {
+void Xbee_com::sentAigamoCommand(int command, HANDLE &arduino, byte LPWM[], byte RPWM[]) {
 	bool Ret;
 	DWORD dwSendSize;
 	DWORD dwErrorMask;
@@ -78,8 +78,7 @@ void Xbee_com::sentAigamoCommand(int command, HANDLE &arduino) {
 		robotAddr[0], robotAddr[1], robotAddr[2], robotAddr[3],
 		robotAddr[4], robotAddr[5], robotAddr[6], robotAddr[7],
 		byte(0xFF), byte(0xFE), byte(0x00), byte(0x00), A, G, S,
-		M, F, A, T, A, L, 1, lPwm[byte(command)], R, 1, rPwm[byte(command)], A, G, E, byte(0x00) };
-
+		M, F, A, T, A, L, 1, LPWM[byte(command)], R, 1, RPWM[byte(command)], A, G, E, byte(0x00) };
 	//チェックサムの計算
 	for (int i = 3; i < 34; i++) {
 		checksum += requestPacket[i];

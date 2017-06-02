@@ -3,8 +3,9 @@
 
 //カメラの設定を行うコンストラクタ
 Img_Proc::Img_Proc(int camId){
-	
+
 	this->cap = cv::VideoCapture(camId);
+	//pixpro使用時に以下の２行を使う
 	//cv::VideoCapture cap;
 	//int camOpen = cap.open("http://172.16.0.254:9176/video?x.mipeg");
 	cap.set(CV_CAP_PROP_FRAME_WIDTH, 640); //@comment webカメラの横幅を設定
@@ -14,6 +15,7 @@ Img_Proc::Img_Proc(int camId){
 
 	//@comment 呼び出しミスがあれば終了
 	if (!this->cap.isOpened()){
+		std::cout << "カメラが接続されていません" << std::endl;
 		system("PAUSE");
 		exit(0);
 	}
@@ -81,13 +83,20 @@ cv::Point2i Img_Proc::serchMaxArea(cv::UMat &src, cv::UMat &plot){
 				max_area_contour = j;
 			}
 		}
-		int count = contours.at(max_area_contour).size();
-		for (int k = 0; k < count; k++){
-			x += contours.at(max_area_contour).at(k).x;
-			y += contours.at(max_area_contour).at(k).y;
+		int count;
+		if (max_area_contour != -1){
+			count = contours.at(max_area_contour).size();
+			for (int k = 0; k < count; k++){
+				x += contours.at(max_area_contour).at(k).x;
+				y += contours.at(max_area_contour).at(k).y;
+			}
+			x /= count;
+			y /= count;
 		}
-		x /= count;
-		y /= count;
+		else{
+			x = 0;
+			y = 0;
+		}
 		cv::circle(plot, cv::Point(x, y), 50, cv::Scalar(0, 255, 255), 3, 4);
 		cv::circle(plot, cv::Point(x, y), 5, cv::Scalar(255, 255, 255), -1, CV_AA);
 	}
@@ -195,6 +204,7 @@ cv::UMat Img_Proc::getFrame(){
 	cap >> src; //@comment 1フレーム取得
 	cap.retrieve(src, CV_CAP_OPENNI_BGR_IMAGE);
 	src.copyTo(capImg);
+
 	return capImg;
 }
 

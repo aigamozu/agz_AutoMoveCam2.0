@@ -32,7 +32,7 @@ Control::Control(int w, int h){
 //
 //	is_updateTarget
 //	
-//	ロボットがターゲットの半径５０cm以内に入ったとき, 次のターゲットに移る.
+//	ロボットがターゲットの半径30cm以内に入ったとき, 次のターゲットに移る.
 // 
 // return : true or false　		( true : ターゲットに入った, false : 入っていない )
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ bool Control::is_updateTarget(void){
 		int dy = nowPoint.y - nowTarget_itr->point.y;
 		double d = sqrt(dx * dx + dy * dy);
 
-		// ターゲットの半径５０cm以内の領域に入ったら訪問完了->ターゲットを移す
+		// ターゲットの半径30cm以内の領域に入ったら訪問完了->ターゲットを移す
 		if (d < 30.0) {
 			result = true;
 			nowTarget_itr++;
@@ -136,7 +136,7 @@ int Control::robot_action(cv::Point2i Previous){
 cv::Point2i Control::area_count(void){
 
 
-	std::cout << "nowPoint : " << nowPoint << std::endl;
+	//std::cout << "nowPoint : " << nowPoint << std::endl;
 	cv::Point2i p;
 	// 位置情報 nowPointから配列の添え字番号を求める
 	for (int i = 0; i < width / 100 * 5; i++){
@@ -200,13 +200,13 @@ void Control::is_out(void){
 //
 //  return : void 
 ////////////////////////////////////////////////////////////////////////////////
-void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
+void Control::plot_target(cv::UMat &img, cv::Point2i Previous){
 
 	// すべてのターゲットのプロット（水色）
 	for (std::vector<target>::iterator itr = allTarget.begin(); itr != allTarget.end(); itr++) {
 		cv::putText(img, std::to_string(itr->n), cv::Point(itr->point), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 0), 0.5, CV_AA);
-		if(itr->point.x >= width || itr->point.y >= height){
-		printf("[%d]  %d, %d\n", itr->n, itr->point.x, itr->point.y);
+		if (itr->point.x >= width || itr->point.y >= height){
+			printf("[%d]  %d, %d\n", itr->n, itr->point.x, itr->point.y);
 		}
 	}
 
@@ -214,10 +214,10 @@ void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
 	line(img, nowPoint, Previous, cv::Scalar(255, 0, 0), 2, CV_AA);
 
 	// 内外判定結果の表示
-//	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
+	//	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 	// ロボットの動作の表示
-//	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
+	//	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 }
 
@@ -232,7 +232,7 @@ void Control::plot_target(cv::UMat &img, cv::Point2i Previous ){
 
 void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat H){
 	std::vector<target> t = allTarget;
-	
+
 	// H = [3,3] 行列
 	double a = H.at<double>(0, 0);
 	double b = H.at<double>(0, 1);
@@ -247,7 +247,7 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 
 	//SOMの全ニューロンの座標を逆変換
 	for (int j = 0; j < t.size(); j++){
-		
+
 		cv::Point2f temp = t[j].point;
 		t[j].point.x = (temp.x * a + temp.y * b + c) / float(temp.x * g + temp.y * h + i);
 		t[j].point.y = (temp.x * d + temp.y * e + f) / float(temp.x * g + temp.y * h + i);
@@ -277,10 +277,10 @@ void Control::plot_transform_target(cv::UMat &img, cv::Point2i Previous, cv::Mat
 
 	// 内外判定結果の表示
 
-//	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
+	//	cv::putText(img, out, cv::Point(10, 25), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 	// ロボットの動作の表示
-//	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
+	//	cv::putText(img, action, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 1.0, CV_AA);
 
 }
 
@@ -330,8 +330,8 @@ cv::Mat Control::heatmap(cv::Point2i pos, cv::Mat *img, cv::Mat *bar){
 			const float t = u * (1.0f - s*(1.0f - fr));
 
 			cv::Vec3b bgr = ptr[j];
-			
-			
+
+
 			//訪問回数に応じてプロットの色を変化
 			switch (id){
 			case 0:
@@ -436,12 +436,12 @@ void Control::set_target(SOM som) {
 	}
 
 	if (PROGRAM == 2){
-		for (int j = 1; j < (height / 100)-1; j++) {
+		for (int j = 1; j < (height / 100) - 1; j++) {
 			// 左から右へターゲットを設定する
 			if (j % 2 != 0){
-				for (int i = 1; i < (width / 100)-1; i++) {
+				for (int i = 1; i < (width / 100) - 1; i++) {
 
-					t.point = som.calc_centerPoint((width / 100 + 1)*i + j,t.neighbor);
+					t.point = som.calc_centerPoint((width / 100 + 1)*i + j, t.neighbor);
 					t.n = num;
 					allTarget.push_back(t);
 					t.neighbor.clear();
@@ -452,7 +452,7 @@ void Control::set_target(SOM som) {
 			// 右から左へターゲットを設定する
 			else {
 				for (int i = (width / 100) - 2; i >= 1; i--) {
-					t.point = som.calc_centerPoint((width / 100 + 1)*i + j,t.neighbor);
+					t.point = som.calc_centerPoint((width / 100 + 1)*i + j, t.neighbor);
 					t.n = num;
 					allTarget.push_back(t);
 					t.neighbor.clear();
